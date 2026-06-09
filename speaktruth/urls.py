@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
+from django.shortcuts import redirect
 
 from dashboard.views import member_home
 from assignments.views import monthly_assignments
@@ -24,16 +25,21 @@ from assignments.views_calendar import assignment_calendar
 from assignments.views_daily import daily_assignments
 from directory.views import directory_view
 
+def home_redirect(request):
+    return redirect("member_home")
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('members/', member_home, name='member_home'),
+    path("", home_redirect, name="home"),
+    path("admin/", admin.site.urls),
+    path("login/", login_view, name="login"),
+    path("logout/", logout_view, name="logout"),
+    path("members/", member_home, name="member_home"),
     path("assignments/<int:year>/<int:month>/", monthly_assignments, name="monthly_assignments"),
     path("assignments/calendar/", assignment_calendar, name="assignment_calendar"),
-    path("assignments/calendar/<int:year>/<int:month>/", assignment_calendar, name="assignment_calendar_month"),
+    path("assignments/calendar/<int:year>/<int:month>/", assignment_calendar_month, name="assignment_calendar_month"),
     path("assignments/<int:year>/<int:month>/<int:day>/", daily_assignments, name="daily_assignments"),
     path("directory/", directory_view, name="directory"),
 ]
+
 
 
