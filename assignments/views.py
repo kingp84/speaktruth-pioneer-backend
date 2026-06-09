@@ -9,7 +9,12 @@ from assignments.models import Assignment
 from assignments.utils import is_second_wednesday, is_fifth_sunday
 
 # PDF engine
-from weasyprint import HTML
+try:
+    from weasyprint import HTML
+    WEASYPRINT_AVAILABLE = True
+except ImportError:
+    EASYPRINT_AVAILABLE = False
+
 
 
 # ---------------------------------------------------------
@@ -73,7 +78,8 @@ def monthly_assignments(request, year, month):
 # MONTHLY ASSIGNMENTS PDF
 # ---------------------------------------------------------
 def monthly_assignments_pdf(request, year, month):
-    month_name = date(year, month, 1).strftime("%B")
+    if not WEASYPRINT_AVAILABLE:
+        return HttpResponse("PDF generation is not available on this server.", status=501)
 
     assignments = Assignment.objects.filter(
         date__year=year,
@@ -213,7 +219,8 @@ def daily_assignments(request, year, month, day):
 # DAILY ASSIGNMENTS PDF
 # ---------------------------------------------------------
 def daily_assignments_pdf(request, year, month, day):
-    dt = date(year, month, day)
+    if not WEASYPRINT_AVAILABLE:
+        return HttpResponse("PDF generation is not available on this server.", status=501)
 
     assignments = Assignment.objects.filter(date=dt).select_related("person", "role")
 
