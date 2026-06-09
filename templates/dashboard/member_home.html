@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .card a {
+            display: block;
+            padding: 12px;
+            margin: 10px 0;
+            background: #0078d4;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 18px;
+        }
+
+        .card a:hover {
+            background: #005fa3;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Member Dashboard</h1>
+
+<div class="card">
+    <a href="/directory/">Directory</a>
+    <a href="/assignments/calendar/">Assignments Calendar</a>
+    <a href="/assignments/{{ year }}/{{ month }}/">This Month's Assignments</a>
+    <a href="https://teams.microsoft.com/l/channel/19%3aABC123..."
+    target="_blank"
+    style="
+        display: inline-block;
+        padding: 12px 20px;
+        background-color: #464EB8;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: bold;
+        margin-top: 10px;
+    ">
+    Open Congregation Microsoft Teams Page
+    </a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Church Directory</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .entry {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .name {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        .roles {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Church Directory</h1>
+
+{% if members %}
+    {% for m in members %}
+        <div class="entry">
+
+            <div class="name">
+                {{ m.first_name }} {{ m.last_name }}
+            </div>
+
+            {% if m.phone %}
+                <div><span class="label">Phone:</span> {{ m.phone }}</div>
+            {% endif %}
+
+            {% if m.email %}
+                <div><span class="label">Email:</span> {{ m.email }}</div>
+            {% endif %}
+
+            {% if m.address %}
+                <div><span class="label">Address:</span> {{ m.address }}</div>
+            {% endif %}
+
+            <div>
+                <span class="label">Status:</span> {{ m.get_status_display }}
+            </div>
+
+            {% if m.roles.all %}
+                <div class="roles">
+                    <span class="label">Roles:</span>
+                    {% for r in m.roles.all %}
+                        {{ r.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if m.notes %}
+                <div style="margin-top: 8px;">
+                    <span class="label">Notes:</span> {{ m.notes }}
+                </div>
+            {% endif %}
+
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No directory entries found.</p>
+{% endif %}
+
+</body>
+</html>

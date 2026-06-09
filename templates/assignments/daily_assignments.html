@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ date|date:"F j, Y" }} Assignments</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            margin-top: 0;
+        }
+
+        .role-line {
+            margin: 6px 0;
+            font-size: 16px;
+        }
+
+        .notes-line {
+            margin-left: 15px;
+            color: #555;
+            font-style: italic;
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>{{ date|date:"F j, Y" }}</h1>
+
+{% if notes %}
+<div class="card">
+    <h2>Service Notes</h2>
+    {% for n in notes %}
+        <p class="notes-line">{{ n }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if sun_am %}
+<div class="card">
+    <h2>Sunday Morning</h2>
+    {% for a in sun_am %}
+        <div class="role-line">
+            <strong>{{ a.role.name }}:</strong> {{ a.person.first_name }} {{ a.person.last_name }}
+        </div>
+        {% if a.notes %}
+            <div class="notes-line">{{ a.notes }}</div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if sun_pm %}
+<div class="card">
+    <h2>Sunday Evening</h2>
+    {% for a in sun_pm %}
+        <div class="role-line">
+            <strong>{{ a.role.name }}:</strong> {{ a.person.first_name }} {{ a.person.last_name }}
+        </div>
+        {% if a.notes %}
+            <div class="notes-line">{{ a.notes }}</div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if wed_pm %}
+<div class="card">
+    <h2>Wednesday Evening</h2>
+    {% for a in wed_pm %}
+        <div class="role-line">
+            <strong>{{ a.role.name }}:</strong> {{ a.person.first_name }} {{ a.person.last_name }}
+        </div>
+        {% if a.notes %}
+            <div class="notes-line">{{ a.notes }}</div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+
+</body>
+</html>

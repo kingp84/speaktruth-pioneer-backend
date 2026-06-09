@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ month_name }} {{ year }} Assignments</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .header h2 {
+            margin: 5px 0;
+            font-size: 22px;
+            font-weight: normal;
+        }
+
+        .header h3 {
+            margin: 5px 0;
+            font-size: 20px;
+            font-weight: normal;
+            color: #555;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .card h4 {
+            margin-top: 0;
+            font-size: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 6px;
+        }
+
+        .role-line {
+            margin: 6px 0;
+            font-size: 16px;
+        }
+
+        .service-title {
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 17px;
+        }
+
+        .notes-line {
+            margin-left: 15px;
+            color: #555;
+            font-style: italic;
+            font-size: 15px;
+        }
+
+        .pdf-button {
+            display: block;
+            width: 220px;
+            margin: 40px auto;
+            padding: 12px;
+            text-align: center;
+            background: #0078d4;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        @media print {
+            .pdf-button {
+                display: none;
+            }
+            body {
+                background: white;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Pioneer church of Christ</h1>
+    <h2>Worship Assignments</h2>
+    <h3>{{ month_name }} {{ year }}</h3>
+</div>
+
+<!-- MONTHLY ASSIGNMENTS -->
+<div class="card">
+    <h4>Monthly Assignments</h4>
+
+    {% for m in monthly_roles %}
+        <div class="role-line">
+            <strong>{{ m.role.name }}:</strong>
+            {{ m.person.first_name }} {{ m.person.last_name }}
+        </div>
+
+        {% if m.notes %}
+            <div class="notes-line">{{ m.notes }}</div>
+        {% endif %}
+    {% empty %}
+        <p>No monthly assignments found.</p>
+    {% endfor %}
+</div>
+
+<!-- SUNDAY ASSIGNMENTS -->
+{% for date, services in sundays.items %}
+<div class="card">
+    <h4>Sunday — {{ date|date:"F j" }}</h4>
+
+    {% if services.notes %}
+        {% for note in services.notes %}
+            <div class="notes-line">{{ note }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="service-title">Sunday Morning</div>
+    {% for a in services.AM %}
+        <div class="role-line">
+            <strong>{{ a.role.name }}:</strong>
+            {{ a.person.first_name }} {{ a.person.last_name }}
+        </div>
+
+        {% if a.notes %}
+            <div class="notes-line">{{ a.notes }}</div>
+        {% endif %}
+    {% empty %}
+        <p>No morning assignments.</p>
+    {% endfor %}
+
+    <div class="service-title">Sunday Evening</div>
+    {% for a in services.PM %}
+        <div class="role-line">
+            <strong>{{ a.role.name }}:</strong>
+            {{ a.person.first_name }} {{ a.person.last_name }}
+        </div>
+
+        {% if a.notes %}
+            <div class="notes-line">{{ a.notes }}</div>
+        {% endif %}
+    {% empty %}
+        <p>No evening assignments.</p>
+    {% endfor %}
+</div>
+{% endfor %}
+
+<!-- WEDNESDAY ASSIGNMENTS -->
+{% for date, items in wednesdays.items %}
+<div class="card">
+    <h4>Wednesday — {{ date|date:"F j" }}</h4>
+
+    {% if items.notes %}
+        {% for note in items.notes %}
+            <div class="notes-line">{{ note }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% for a in items.items %}
+        <div class="role-line">
+            <strong>{{ a.role.name }}:</strong>
+            {{ a.person.first_name }} {{ a.person.last_name }}
+        </div>
+
+        {% if a.notes %}
+            <div class="notes-line">{{ a.notes }}</div>
+        {% endif %}
+    {% empty %}
+        <p>No Wednesday assignments.</p>
+    {% endfor %}
+</div>
+{% endfor %}
+
+<!-- NOTES -->
+<div class="card">
+    <h4>Notes</h4>
+    <p>• Song Leader gives announcements.</p>
+    <p>• Preacher gives Scripture Reader the passage.</p>
+    <p>• Wednesday announcements handled by the Bible class teacher.</p>
+</div>
+
+<!-- PDF BUTTON -->
+<a class="pdf-button" href="#" onclick="window.print()">Download as PDF</a>
+
+</body>
+</html>
