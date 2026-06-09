@@ -16,14 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.contrib.auth import views as auth_views
 from django.shortcuts import redirect
 
-from dashboard.views import member_home
-from assignments.views import monthly_assignments
-from assignments.views_calendar import assignment_calendar
-from assignments.views_daily import daily_assignments
+from members.views import login_view, logout_view, member_home
+from assignments.views import (
+    monthly_assignments,
+    assignment_calendar,
+    assignment_calendar_month,
+    daily_assignments,
+)
 from directory.views import directory_view
+
 
 def home_redirect(request):
     return redirect("member_home")
