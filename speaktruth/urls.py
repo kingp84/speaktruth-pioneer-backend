@@ -27,6 +27,7 @@ from assignments.views import (
     assignment_calendar,
     assignment_calendar_month,
     daily_assignments,
+    monthly_assignments_pdf,
 )
 from directory.views import directory_view
 
@@ -45,8 +46,7 @@ urlpatterns = [
     path("assignments/calendar/<int:year>/<int:month>/", assignment_calendar_month, name="assignment_calendar_month"),
     path("assignments/<int:year>/<int:month>/<int:day>/", daily_assignments, name="daily_assignments"),
     path("directory/", directory_view, name="directory"),
-    path("assignments/pdf/<int:year>/<int:month>/", views.monthly_assignments_pdf, name="monthly_assignments_pdf",
-    ),
+    path("assignments/pdf/<int:year>/<int:month>/", monthly_assignments_pdf, name="monthly_assignments_pdf"),
 
 ]
 
