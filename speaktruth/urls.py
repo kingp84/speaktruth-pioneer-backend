@@ -19,6 +19,7 @@ from django.urls import path
 from django.shortcuts import redirect
 from django.conf import settings
 from django.conf.urls.static import static
+from assignments.views import monthly_assignments_pdf
 
 from members.views import login_view, logout_view, member_home
 from assignments.views import (
