@@ -38,7 +38,7 @@ def monthly_assignments(request, year, month):
             # 5th Sunday logic
             if is_fifth_sunday(dt):
                 sundays[dt]["notes"].append(
-                    "Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service."
+                    "Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service at 6p."
                 )
                 sundays[dt]["PM"] = []
 
@@ -154,3 +154,7 @@ def daily_assignments(request, year, month, day):
     }
 
     return render(request, "assignments/daily_assignments.html", context)
+
+print("Clicked date:", selected_date)
+print("Sunday keys:", list(sundays.keys()))
+print("Assignments for that date:", sundays.get(selected_date))

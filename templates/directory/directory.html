@@ -7,39 +7,70 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
+            background: #eef1f4;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
         }
 
         h1 {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 35px;
+            font-size: 32px;
+            color: #333;
         }
 
         .entry {
-            background: white;
-            padding: 15px;
-            margin-bottom: 15px;
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            border: 1px solid #dcdcdc;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
         .name {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
+            margin-bottom: 8px;
+            color: #222;
         }
 
         .label {
             font-weight: bold;
+            color: #444;
         }
 
         .roles {
-            margin-top: 5px;
+            margin-top: 8px;
+        }
+
+        .pdf-button {
+            display: block;
+            width: 220px;
+            margin: 40px auto 0 auto;
+            padding: 12px 18px;
+            text-align: center;
+            background: #007bff;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .pdf-button:hover {
+            background: #0056b3;
         }
     </style>
 </head>
 
 <body>
+
+<div class="container">
 
 <h1>Church Directory</h1>
 
@@ -77,7 +108,7 @@
             {% endif %}
 
             {% if m.notes %}
-                <div style="margin-top: 8px;">
+                <div style="margin-top: 10px;">
                     <span class="label">Notes:</span> {{ m.notes }}
                 </div>
             {% endif %}
@@ -87,6 +118,11 @@
 {% else %}
     <p>No directory entries found.</p>
 {% endif %}
+
+<!-- PDF Download Button -->
+<a href="{% url 'directory_pdf' %}" class="pdf-button">Download Directory PDF</a>
+
+</div>
 
 </body>
 </html>
