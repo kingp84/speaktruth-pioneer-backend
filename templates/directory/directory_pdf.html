@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Church Directory</title>
+
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+    <style>
+        body {
+            font-family: Georgia, serif;
+            margin: 40px;
+            color: #000;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 25px;
+        }
+
+        .entry {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+
+        .name {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        .notes {
+            font-style: italic;
+            margin-left: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Church Directory</h1>
+
+{% for m in members %}
+    <div class="entry">
+
+        <div class="name">{{ m.first_name }} {{ m.last_name }}</div>
+
+        {% if m.phone %}
+            <div><span class="label">Phone:</span> {{ m.phone }}</div>
+        {% endif %}
+
+        {% if m.email %}
+            <div><span class="label">Email:</span> {{ m.email }}</div>
+        {% endif %}
+
+        {% if m.address %}
+            <div><span class="label">Address:</span> {{ m.address }}</div>
+        {% endif %}
+
+        <div><span class="label">Status:</span> {{ m.get_status_display }}</div>
+
+        {% if m.roles.all %}
+            <div>
+                <span class="label">Roles:</span>
+                {% for r in m.roles.all %}
+                    {{ r.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if m.notes %}
+            <div class="notes">{{ m.notes }}</div>
+        {% endif %}
+
+    </div>
+{% endfor %}
+
+</body>
+</html>

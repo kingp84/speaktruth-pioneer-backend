@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ month_name }} {{ year }} Assignments</title>
+
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+    <style>
+        body {
+            font-family: Georgia, serif;
+            margin: 40px;
+            color: #000;
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 { font-size: 28px; margin-bottom: 10px; }
+        h2 { font-size: 22px; margin-bottom: 5px; }
+        h3 { font-size: 20px; margin-bottom: 20px; }
+
+        .section {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            border-bottom: 1px solid #000;
+            margin-bottom: 10px;
+        }
+
+        .role-line {
+            margin: 4px 0;
+            font-size: 16px;
+        }
+
+        .notes {
+            font-style: italic;
+            margin-left: 15px;
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Pioneer church of Christ</h1>
+<h2>Worship Assignments</h2>
+<h3>{{ month_name }} {{ year }}</h3>
+
+<div class="section">
+    <div class="section-title">Monthly Assignments</div>
+
+    {% for m in monthly_roles %}
+        <div class="role-line">
+            <strong>{{ m.role.name }}:</strong>
+            {{ m.person.first_name }} {{ m.person.last_name }}
+        </div>
+
+        {% if m.notes %}
+            <div class="notes">{{ m.notes }}</div>
+        {% endif %}
+    {% empty %}
+        <p>No monthly assignments.</p>
+    {% endfor %}
+</div>
+
+{% for date, services in sundays.items %}
+<div class="section">
+    <div class="section-title">Sunday — {{ date|date:"F j" }}</div>
+
+    {% for note in services.notes %}
+        <div class="notes">{{ note }}</div>
+    {% endfor %}
+
+    <strong>Sunday Morning</strong>
+    {% for a in services.AM %}
+        <div class="role-line">
+            <strong>{{ a.role.name }}:</strong>
+            {{ a.person.first_name }} {{ a.person.last_name }}
+        </div>
+        {% if a.notes %}
+            <div class="notes">{{ a.notes }}</div>
+        {% endif %}
+    {% endfor %}
+
+    <br>
+
+    <strong>Sunday Evening</strong>
+    {% for a in services.PM %}
+        <div class="role-line">
+            <strong>{{ a.role.name }}:</strong>
+            {{ a.person.first_name }} {{ a.person.last_name }}
+        </div>
+        {% if a.notes %}
+            <div class="notes">{{ a.notes }}</div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endfor %}
+
+{% for date, items in wednesdays.items %}
+<div class="section">
+    <div class="section-title">Wednesday — {{ date|date:"F j" }}</div>
+
+    {% for note in items.notes %}
+        <div class="notes">{{ note }}</div>
+    {% endfor %}
+
+    {% for a in items.items %}
+        <div class="role-line">
+            <strong>{{ a.role.name }}:</strong>
+            {{ a.person.first_name }} {{ a.person.last_name }}
+        </div>
+        {% if a.notes %}
+            <div class="notes">{{ a.notes }}</div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endfor %}
+
+<div class="section">
+    <div class="section-title">Notes</div>
+    <p>• Song Leader gives announcements.</p>
+    <p>• Preacher gives Scripture Reader the passage.</p>
+    <p>• Wednesday announcements handled by the Bible class teacher.</p>
+</div>
+
+</body>
+</html>
