@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ month_name }} {{ year }} Assignments</title>
-
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <style>
         body {
             margin: 0;
@@ -233,7 +233,7 @@
 </div>
 
 <!-- PDF.js VIEWER BUTTON -->
-<a class="pdf-button" href="{% url 'monthly_assignments_pdf' year=year month=month %}">
+<a class="pdf-button"
     View Monthly PDF
 </a>
 
