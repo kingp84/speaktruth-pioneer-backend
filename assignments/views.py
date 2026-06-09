@@ -7,9 +7,9 @@ from directory.models import Role
 from assignments.utils import is_second_wednesday, is_fifth_sunday
 
 
-# -----------------------------
+# ---------------------------------------------------------
 # MONTHLY ASSIGNMENTS VIEW
-# -----------------------------
+# ---------------------------------------------------------
 def monthly_assignments(request, year, month):
     month_name = date(year, month, 1).strftime("%B")
 
@@ -62,14 +62,17 @@ def monthly_assignments(request, year, month):
     return render(request, "assignments/monthly_assignments.html", context)
 
 
-# -----------------------------
-# CALENDAR VIEW (MONTH GRID)
-# -----------------------------
+# ---------------------------------------------------------
+# CALENDAR REDIRECT (GO TO CURRENT MONTH)
+# ---------------------------------------------------------
 def assignment_calendar(request):
     today = timezone.now().date()
     return redirect("assignment_calendar_month", year=today.year, month=today.month)
 
 
+# ---------------------------------------------------------
+# MONTHLY CALENDAR GRID VIEW
+# ---------------------------------------------------------
 def assignment_calendar_month(request, year, month):
     first_day = date(year, month, 1)
     _, num_days = monthrange(year, month)
@@ -94,9 +97,9 @@ def assignment_calendar_month(request, year, month):
     return render(request, "assignments/calendar.html", context)
 
 
-# -----------------------------
+# ---------------------------------------------------------
 # DAILY ASSIGNMENTS VIEW
-# -----------------------------
+# ---------------------------------------------------------
 def daily_assignments(request, year, month, day):
     dt = date(year, month, day)
 
