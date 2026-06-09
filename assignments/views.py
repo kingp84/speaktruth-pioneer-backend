@@ -153,8 +153,13 @@ def daily_assignments(request, year, month, day):
         "notes": notes,
     }
 
+    def your_view_name(request, year, month, day):
+        selected_date = date(year, month, day)
+
+        print("Clicked date:", selected_date)
+        print("Sunday keys:", list(sundays.keys()))
+        print("Assignments for that date:", sundays.get(selected_date))
+
     return render(request, "assignments/daily_assignments.html", context)
 
-print("Clicked date:", selected_date)
-print("Sunday keys:", list(sundays.keys()))
-print("Assignments for that date:", sundays.get(selected_date))
+
