@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from datetime import date
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 
 
 def login_view(request):
@@ -26,4 +26,8 @@ def logout_view(request):
 
 @login_required
 def member_home(request):
-    return render(request, "members/home.html")
+    today = date.today()
+    return render(request, "members/home.html", {
+        "year": today.year,
+        "month": today.month,
+    })
