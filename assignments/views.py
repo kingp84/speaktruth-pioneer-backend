@@ -1,17 +1,16 @@
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from calendar import monthrange
+from django.http import HttpResponse
+from django.template.loader import render_to_string
 from datetime import date
+import calendar
+
 from assignments.models import Assignment
 from assignments.utils import is_second_wednesday, is_fifth_sunday
-import calendar
-from django.http import HttpResponseRedirect
-from urllib.parse import quote
 
-def monthly_assignments_pdf(request, year, month):
-    pdf_path = f"/media/assignments/assignments_{year}_{month:02d}.pdf"
-    viewer_url = f"/static/pdfjs/web/viewer.html?file={quote(pdf_path)}"
-    return HttpResponseRedirect(viewer_url)
+# PDF engine
+from weasyprint import HTML
+
 
 # ---------------------------------------------------------
 # MONTHLY ASSIGNMENTS VIEW
@@ -43,10 +42,11 @@ def monthly_assignments(request, year, month):
 
             # 5th Sunday logic
             if is_fifth_sunday(dt):
-                sundays[dt]["notes"].append(
-                    "Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service at 6p."
-                )
-                sundays[dt]["PM"] = []
+                if "Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service at 6p." not in sundays[dt]["notes"]:
+                    sundays[dt]["notes"].append(
+                        "Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service at 6p."
+                    )
+                sundays[dt]["PM"] = []  # No PM service on 5th Sunday
 
         # Wednesday assignments
         elif a.service_type == "WED_PM":
@@ -54,7 +54,8 @@ def monthly_assignments(request, year, month):
             wednesdays[dt]["items"].append(a)
 
             if is_second_wednesday(dt):
-                wednesdays[dt]["notes"].append("Singing Night — congregational singing service.")
+                if "Singing Night — congregational singing service." not in wednesdays[dt]["notes"]:
+                    wednesdays[dt]["notes"].append("Singing Night — congregational singing service.")
 
     context = {
         "year": year,
@@ -69,7 +70,66 @@ def monthly_assignments(request, year, month):
 
 
 # ---------------------------------------------------------
-# CALENDAR REDIRECT (GO TO CURRENT MONTH)
+# MONTHLY ASSIGNMENTS PDF
+# ---------------------------------------------------------
+def monthly_assignments_pdf(request, year, month):
+    month_name = date(year, month, 1).strftime("%B")
+
+    assignments = Assignment.objects.filter(
+        date__year=year,
+        date__month=month
+    ).select_related("person", "role")
+
+    monthly_roles = assignments.filter(service_type="MONTHLY")
+
+    sundays = {}
+    wednesdays = {}
+
+    for a in assignments:
+        dt = a.date
+
+        if a.service_type in ["SUN_AM", "SUN_PM"]:
+            sundays.setdefault(dt, {"AM": [], "PM": [], "notes": []})
+
+            if a.service_type == "SUN_AM":
+                sundays[dt]["AM"].append(a)
+            else:
+                sundays[dt]["PM"].append(a)
+
+            if is_fifth_sunday(dt):
+                if "Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service at 6p." not in sundays[dt]["notes"]:
+                    sundays[dt]["notes"].append(
+                        "Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service at 6p."
+                    )
+                sundays[dt]["PM"] = []
+
+        elif a.service_type == "WED_PM":
+            wednesdays.setdefault(dt, {"items": [], "notes": []})
+            wednesdays[dt]["items"].append(a)
+
+            if is_second_wednesday(dt):
+                if "Singing Night — congregational singing service." not in wednesdays[dt]["notes"]:
+                    wednesdays[dt]["notes"].append("Singing Night — congregational singing service.")
+
+    context = {
+        "year": year,
+        "month": month,
+        "month_name": month_name,
+        "monthly_roles": monthly_roles,
+        "sundays": dict(sorted(sundays.items())),
+        "wednesdays": dict(sorted(wednesdays.items())),
+    }
+
+    html_string = render_to_string("assignments/monthly_assignments.html", context)
+    pdf_file = HTML(string=html_string).write_pdf()
+
+    response = HttpResponse(pdf_file, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename=\"assignments_{year}_{month}.pdf\"'
+    return response
+
+
+# ---------------------------------------------------------
+# CALENDAR REDIRECT
 # ---------------------------------------------------------
 def assignment_calendar(request):
     today = timezone.now().date()
@@ -77,7 +137,7 @@ def assignment_calendar(request):
 
 
 # ---------------------------------------------------------
-# MONTHLY CALENDAR GRID VIEW (CORRECTED)
+# MONTHLY CALENDAR GRID VIEW
 # ---------------------------------------------------------
 def assignment_calendar_month(request, year, month):
     month_date = date(year, month, 1)
@@ -95,20 +155,12 @@ def assignment_calendar_month(request, year, month):
     assignment_dates = set(a.date.strftime("%Y-%m-%d") for a in assignments)
 
     # Previous month/year
-    if month == 1:
-        prev_month = 12
-        prev_year = year - 1
-    else:
-        prev_month = month - 1
-        prev_year = year
+    prev_month = 12 if month == 1 else month - 1
+    prev_year = year - 1 if month == 1 else year
 
     # Next month/year
-    if month == 12:
-        next_month = 1
-        next_year = year + 1
-    else:
-        next_month = month + 1
-        next_year = year
+    next_month = 1 if month == 12 else month + 1
+    next_year = year + 1 if month == 12 else year
 
     context = {
         "year": year,
@@ -127,13 +179,16 @@ def assignment_calendar_month(request, year, month):
 
 
 # ---------------------------------------------------------
-# DAILY ASSIGNMENTS VIEW (FULLY FIXED)
+# DAILY ASSIGNMENTS VIEW
 # ---------------------------------------------------------
 def daily_assignments(request, year, month, day):
     dt = date(year, month, day)
 
     assignments = Assignment.objects.filter(date=dt).select_related("person", "role")
-    monthly_roles = Assignment.objects.filter(service_type="MONTHLY").select_related("person", "role")
+
+    sun_am = assignments.filter(service_type="SUN_AM")
+    sun_pm = assignments.filter(service_type="SUN_PM")
+    wed_pm = assignments.filter(service_type="WED_PM")
 
     notes = []
 
@@ -145,9 +200,46 @@ def daily_assignments(request, year, month, day):
 
     context = {
         "date": dt,
-        "assignments": assignments,
-        "monthly_roles": monthly_roles,
+        "sun_am": sun_am,
+        "sun_pm": sun_pm,
+        "wed_pm": wed_pm,
         "notes": notes,
     }
 
     return render(request, "assignments/daily_assignments.html", context)
+
+
+# ---------------------------------------------------------
+# DAILY ASSIGNMENTS PDF
+# ---------------------------------------------------------
+def daily_assignments_pdf(request, year, month, day):
+    dt = date(year, month, day)
+
+    assignments = Assignment.objects.filter(date=dt).select_related("person", "role")
+
+    sun_am = assignments.filter(service_type="SUN_AM")
+    sun_pm = assignments.filter(service_type="SUN_PM")
+    wed_pm = assignments.filter(service_type="WED_PM")
+
+    notes = []
+
+    if is_fifth_sunday(dt):
+        notes.append("Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service.")
+
+    if is_second_wednesday(dt):
+        notes.append("Singing Night — congregational singing service.")
+
+    context = {
+        "date": dt,
+        "sun_am": sun_am,
+        "sun_pm": sun_pm,
+        "wed_pm": wed_pm,
+        "notes": notes,
+    }
+
+    html_string = render_to_string("assignments/daily_assignments.html", context)
+    pdf_file = HTML(string=html_string).write_pdf()
+
+    response = HttpResponse(pdf_file, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename=\"assignments_{dt.isoformat()}.pdf\"'
+    return response
