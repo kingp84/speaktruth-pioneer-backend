@@ -74,29 +74,21 @@ def assignment_calendar(request):
 # MONTHLY CALENDAR GRID VIEW (CORRECTED)
 # ---------------------------------------------------------
 def assignment_calendar_month(request, year, month):
-    # Create a date object for the first day of the month
     month_date = date(year, month, 1)
-
-    # Month name for display
     month_name = month_date.strftime("%B")
-
-    # Today's date for highlighting
     today = timezone.now().date()
 
-    # Build the calendar matrix (weeks × days)
-    cal = calendar.Calendar(firstweekday=6)  # Week starts on Sunday
+    cal = calendar.Calendar(firstweekday=6)  # Sunday start
     month_weeks = cal.monthdayscalendar(year, month)
 
-    # Get all assignments for this month
     assignments = Assignment.objects.filter(
         date__year=year,
         date__month=month
     )
 
-    # Convert assignment dates to strings for template comparison
     assignment_dates = set(a.date.strftime("%Y-%m-%d") for a in assignments)
 
-    # Determine previous month/year
+    # Previous month/year
     if month == 1:
         prev_month = 12
         prev_year = year - 1
@@ -104,7 +96,7 @@ def assignment_calendar_month(request, year, month):
         prev_month = month - 1
         prev_year = year
 
-    # Determine next month/year
+    # Next month/year
     if month == 12:
         next_month = 1
         next_year = year + 1
@@ -129,13 +121,12 @@ def assignment_calendar_month(request, year, month):
 
 
 # ---------------------------------------------------------
-# DAILY ASSIGNMENTS VIEW
+# DAILY ASSIGNMENTS VIEW (FULLY FIXED)
 # ---------------------------------------------------------
 def daily_assignments(request, year, month, day):
     dt = date(year, month, day)
 
     assignments = Assignment.objects.filter(date=dt).select_related("person", "role")
-
     monthly_roles = Assignment.objects.filter(service_type="MONTHLY").select_related("person", "role")
 
     notes = []
@@ -153,13 +144,4 @@ def daily_assignments(request, year, month, day):
         "notes": notes,
     }
 
-    return render(request, "assignments/daily_assignments.html", {
-        "date": selected_date,
-        "sun_am": sun_am,
-        "sun_pm": sun_pm,
-        "wed_pm": wed_pm,
-        "notes": notes,
-    })
-
-
-
+    return render(request, "assignments/daily_assignments.html", context)
