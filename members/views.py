@@ -1,7 +1,7 @@
 from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-
+from django.contrib.auth import authenticate, login, logout
 
 def login_view(request):
     if request.method == "POST":
