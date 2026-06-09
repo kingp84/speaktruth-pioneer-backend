@@ -3,8 +3,8 @@ from django.utils import timezone
 from calendar import monthrange
 from datetime import date
 from assignments.models import Assignment
-from directory.models import Role
 from assignments.utils import is_second_wednesday, is_fifth_sunday
+import calendar
 
 
 # ---------------------------------------------------------
@@ -71,30 +71,62 @@ def assignment_calendar(request):
 
 
 # ---------------------------------------------------------
-# MONTHLY CALENDAR GRID VIEW
+# MONTHLY CALENDAR GRID VIEW (CORRECTED)
 # ---------------------------------------------------------
 def assignment_calendar_month(request, year, month):
+    # Create a date object for the first day of the month
     month_date = date(year, month, 1)
-    _, num_days = monthrange(year, month)
 
-    days = [date(year, month, d) for d in range(1, num_days + 1)]
+    # Month name for display
+    month_name = month_date.strftime("%B")
 
+    # Today's date for highlighting
+    today = timezone.now().date()
+
+    # Build the calendar matrix (weeks × days)
+    cal = calendar.Calendar(firstweekday=6)  # Week starts on Sunday
+    month_weeks = cal.monthdayscalendar(year, month)
+
+    # Get all assignments for this month
     assignments = Assignment.objects.filter(
         date__year=year,
         date__month=month
     )
 
-    assignment_dates = set(a.date for a in assignments)
+    # Convert assignment dates to strings for template comparison
+    assignment_dates = set(a.date.strftime("%Y-%m-%d") for a in assignments)
+
+    # Determine previous month/year
+    if month == 1:
+        prev_month = 12
+        prev_year = year - 1
+    else:
+        prev_month = month - 1
+        prev_year = year
+
+    # Determine next month/year
+    if month == 12:
+        next_month = 1
+        next_year = year + 1
+    else:
+        next_month = month + 1
+        next_year = year
 
     context = {
         "year": year,
         "month": month,
-        "month_name": month_date.strftime("%B"),
-        "days": days,
+        "month_name": month_name,
+        "calendar": month_weeks,
+        "today": today,
         "assignment_dates": assignment_dates,
+        "prev_month": prev_month,
+        "prev_year": prev_year,
+        "next_month": next_month,
+        "next_year": next_year,
     }
 
     return render(request, "assignments/calendar.html", context)
+
 
 # ---------------------------------------------------------
 # DAILY ASSIGNMENTS VIEW
