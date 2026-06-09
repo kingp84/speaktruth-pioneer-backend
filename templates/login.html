@@ -24,6 +24,7 @@
             border: 2px solid #b8860b;
             box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
             position: relative;
+            text-align: center;
         }
 
         .login-box h2 {
@@ -37,6 +38,8 @@
         label {
             font-size: 14px;
             color: #e8e8e8;
+            display: block;
+            text-align: left;
         }
 
         input {
@@ -83,6 +86,21 @@
         .corner.tr { top: -2px; right: -2px; border-top-right-radius: 12px; }
         .corner.bl { bottom: -2px; left: -2px; border-bottom-left-radius: 12px; }
         .corner.br { bottom: -2px; right: -2px; border-bottom-right-radius: 12px; }
+
+        /* Public homepage link */
+        .public-link {
+            margin-top: 20px;
+        }
+
+        .public-link a {
+            color: #ffd700;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .public-link a:hover {
+            text-shadow: 0 0 10px #ffd700;
+        }
     </style>
 </head>
 
@@ -109,6 +127,14 @@
 
         <button type="submit">Log In</button>
     </form>
+
+    <!-- NEW Public Homepage Link -->
+    <div class="public-link">
+        <a href="https://kingp84.github.io/speaktruth-pioneer/index.html">
+            Return to Public Homepage
+        </a>
+    </div>
+
 </div>
 </body>
 </html>

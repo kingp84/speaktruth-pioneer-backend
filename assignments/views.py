@@ -74,7 +74,7 @@ def assignment_calendar(request):
 # MONTHLY CALENDAR GRID VIEW
 # ---------------------------------------------------------
 def assignment_calendar_month(request, year, month):
-    first_day = date(year, month, 1)
+    month_date = date(year, month, 1)
     _, num_days = monthrange(year, month)
 
     days = [date(year, month, d) for d in range(1, num_days + 1)]
@@ -89,13 +89,12 @@ def assignment_calendar_month(request, year, month):
     context = {
         "year": year,
         "month": month,
-        "month_name": first_day.strftime("%B"),
+        "month_name": month_date.strftime("%B"),
         "days": days,
         "assignment_dates": assignment_dates,
     }
 
     return render(request, "assignments/calendar.html", context)
-
 
 # ---------------------------------------------------------
 # DAILY ASSIGNMENTS VIEW
