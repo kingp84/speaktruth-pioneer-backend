@@ -5,7 +5,13 @@ from datetime import date
 from assignments.models import Assignment
 from assignments.utils import is_second_wednesday, is_fifth_sunday
 import calendar
+from django.http import HttpResponseRedirect
+from urllib.parse import quote
 
+def monthly_assignments_pdf(request, year, month):
+    pdf_path = f"/media/assignments/assignments_{year}_{month:02d}.pdf"
+    viewer_url = f"/static/pdfjs/web/viewer.html?file={quote(pdf_path)}"
+    return HttpResponseRedirect(viewer_url)
 
 # ---------------------------------------------------------
 # MONTHLY ASSIGNMENTS VIEW

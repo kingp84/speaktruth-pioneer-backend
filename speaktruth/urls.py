@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.shortcuts import redirect
+from django.conf import settings
+from django.conf.urls.static import static
 
 from members.views import login_view, logout_view, member_home
 from assignments.views import (
@@ -42,7 +44,11 @@ urlpatterns = [
     path("assignments/calendar/<int:year>/<int:month>/", assignment_calendar_month, name="assignment_calendar_month"),
     path("assignments/<int:year>/<int:month>/<int:day>/", daily_assignments, name="daily_assignments"),
     path("directory/", directory_view, name="directory"),
+    path("assignments/pdf/<int:year>/<int:month>/", views.monthly_assignments_pdf, name="monthly_assignments_pdf",
+    ),
+
 ]
 
-
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
