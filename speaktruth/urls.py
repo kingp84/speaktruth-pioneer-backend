@@ -33,7 +33,7 @@ urlpatterns = [
     path("logout/", logout_view, name="logout"),
 
     # Member home
-    path("members/", views.member_home, name="member_home"),
+    path("members/", member_home, name="member_home"),
 
     # Assignments
     path("assignments/<int:year>/<int:month>/", monthly_assignments, name="monthly_assignments"),
