@@ -27,7 +27,9 @@ def logout_view(request):
 @login_required
 def member_home(request):
     today = date.today()
+
     return render(request, "members/home.html", {
+        "today": today,
         "year": today.year,
         "month": today.month,
     })
