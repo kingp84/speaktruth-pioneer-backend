@@ -204,15 +204,21 @@ def daily_assignments(request, year, month, day):
     if is_second_wednesday(dt):
         notes.append("Singing Night — congregational singing service.")
 
+    today = date.today()
+
     context = {
         "date": dt,
         "sun_am": sun_am,
         "sun_pm": sun_pm,
         "wed_pm": wed_pm,
         "notes": notes,
+        "today": today,
+        "year": today.year,
+        "month": today.month,
     }
 
     return render(request, "assignments/daily_assignments.html", context)
+
 
 
 # ---------------------------------------------------------
