@@ -8,7 +8,11 @@ class ServiceNotes(models.Model):
         return "Service Notes"
 
 class Role(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
 
     # Who is allowed to perform this role
     gender_restriction = models.CharField(
