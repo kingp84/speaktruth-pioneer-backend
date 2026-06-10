@@ -10,88 +10,73 @@
 
 <body class="bg-light">
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
-  <div class="container-fluid">
-
-    <a class="navbar-brand fw-bold" href="{% url 'member_home' %}">Pioneer & Bell</a>
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navMenu">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-        <li class="nav-item">
-            <a class="nav-link {% if request.path == '/members/' %}active{% endif %}"
-               href="{% url 'member_home' %}">
-               Dashboard
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link"
-               href="{% url 'monthly_assignments' year=today.year month=today.month %}">
-               This Month's Assignments
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'assignment_calendar' %}">
-               Assignments Calendar
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'directory' %}">
-               Directory
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link text-warning fw-bold" href="{% url 'logout' %}">
-               Logout
-            </a>
-        </li>
-
-      </ul>
+<!-- SIMPLE CENTERED NAVBAR -->
+<nav class="navbar navbar-dark bg-primary mb-4">
+    <div class="container-fluid justify-content-center">
+        <span class="navbar-brand mb-0 h1 fw-bold">Pioneer & Bell</span>
     </div>
-
-  </div>
 </nav>
 
-<!-- MAIN CONTENT -->
-<div class="container bg-white p-4 rounded shadow-sm">
+<div class="container">
 
-    <h1 class="text-primary mb-4">Member Dashboard</h1>
+    <div class="row">
 
-    <p class="fs-5">
-        Welcome to the members area. Use the navigation bar above to access assignments,
-        the calendar, and the directory.
-    </p>
+        <!-- LEFT SIDE: Welcome text -->
+        <div class="col-md-8">
+            <div class="bg-white p-4 rounded shadow-sm mb-4">
+                <h1 class="text-primary mb-3">Member Dashboard</h1>
+                <p class="fs-5">
+                    Welcome to the members area. Use the buttons on the right to access assignments,
+                    the calendar, directory, and other resources.
+                </p>
+            </div>
+        </div>
 
-    <div class="mt-4">
+        <!-- RIGHT SIDE: BUTTON PANEL -->
+        <div class="col-md-4">
+            <div class="d-grid gap-3">
 
-        <!-- Microsoft Teams Button -->
-        <a class="btn btn-primary btn-lg me-2"
-           href="YOUR_TEAMS_LINK_HERE"
-           target="_blank">
-            Microsoft Teams
-        </a>
+                <a class="btn btn-primary btn-lg"
+                   href="{% url 'monthly_assignments' year=today.year month=today.month %}">
+                    This Month's Assignments
+                </a>
 
-        <!-- Public Website Button -->
+                <a class="btn btn-primary btn-lg"
+                   href="{% url 'assignment_calendar' %}">
+                    Assignments Calendar
+                </a>
+
+                <a class="btn btn-primary btn-lg"
+                   href="{% url 'directory' %}">
+                    Directory
+                </a>
+
+                <a class="btn btn-secondary btn-lg"
+                   href="YOUR_TEAMS_LINK_HERE" target="_blank">
+                    Microsoft Teams
+                </a>
+
+                <a class="btn btn-danger btn-lg"
+                   href="{% url 'logout' %}">
+                    Logout
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PUBLIC WEBSITE BUTTON CENTERED AT BOTTOM -->
+    <div class="text-center mt-5">
         <a class="btn btn-light btn-lg"
            href="https://kingp84.github.io/speaktruth-pioneer/index.html"
            target="_blank">
             Public Website
         </a>
-
     </div>
 
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
