@@ -2,144 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Member Login – Pioneer & Bell</title>
 
     {% load static %}
-
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            background: url('/static/images/login_bg.jpg') no-repeat center center/cover;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: "Georgia", serif;
-            color: #f5f5f5;
-        }
-
-        .login-box {
-            background: rgba(0, 0, 0, 0.75);
-            padding: 40px;
-            width: 360px;
-            border-radius: 12px;
-            border: 2px solid #b8860b;
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
-            position: relative;
-            text-align: center;
-        }
-
-        .login-box h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 28px;
-            color: #ffd700;
-            letter-spacing: 1px;
-        }
-
-        label {
-            font-size: 14px;
-            color: #e8e8e8;
-            display: block;
-            text-align: left;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 6px;
-            margin-bottom: 18px;
-            border-radius: 6px;
-            border: 1px solid #b8860b;
-            background: #111;
-            color: #fff;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(90deg, #b8860b, #ffd700);
-            border: none;
-            border-radius: 6px;
-            color: #000;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: linear-gradient(90deg, #d4a017, #ffdf00);
-        }
-
-        .error {
-            color: #ff4444;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        /* Decorative gold corners */
-        .corner {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background: radial-gradient(circle at center, #ffd700 0%, transparent 70%);
-        }
-        .corner.tl { top: -2px; left: -2px; border-top-left-radius: 12px; }
-        .corner.tr { top: -2px; right: -2px; border-top-right-radius: 12px; }
-        .corner.bl { bottom: -2px; left: -2px; border-bottom-left-radius: 12px; }
-        .corner.br { bottom: -2px; right: -2px; border-bottom-right-radius: 12px; }
-
-        /* Public homepage link */
-        .public-link {
-            margin-top: 20px;
-        }
-
-        .public-link a {
-            color: #ffd700;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .public-link a:hover {
-            text-shadow: 0 0 10px #ffd700;
-        }
-    </style>
 </head>
 
-<body>
-<div class="login-box">
-    <div class="corner tl"></div>
-    <div class="corner tr"></div>
-    <div class="corner bl"></div>
-    <div class="corner br"></div>
+<body class="bg-light d-flex justify-content-center align-items-center" style="height: 100vh;">
 
-    <h2>Login</h2>
+<div class="container" style="max-width: 420px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
 
-    {% if error %}
-        <p class="error">{{ error }}</p>
-    {% endif %}
+            <h2 class="text-center text-primary mb-4">Member Login</h2>
 
-    <form method="POST">
-        {% csrf_token %}
-        <label>Username</label>
-        <input type="text" name="username" required>
+            {% if error %}
+                <div class="alert alert-danger text-center">{{ error }}</div>
+            {% endif %}
 
-        <label>Password</label>
-        <input type="password" name="password" required>
+            <form method="POST">
+                {% csrf_token %}
 
-        <button type="submit">Log In</button>
-    </form>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Username</label>
+                    <input type="text" name="username" class="form-control" required>
+                </div>
 
-    <!-- NEW Public Homepage Link -->
-    <div class="public-link">
-        <a href="https://kingp84.github.io/speaktruth-pioneer/index.html">
-            Return to Public Homepage
-        </a>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Log In</button>
+            </form>
+
+            <div class="text-center mt-3">
+                <a href="https://kingp84.github.io/speaktruth-pioneer/index.html" class="text-decoration-none">
+                    Return to Public Homepage
+                </a>
+            </div>
+
+        </div>
     </div>
-
 </div>
+
 </body>
 </html>

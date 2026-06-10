@@ -1,156 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{{ date|date:"F j, Y" }} Assignments</title>
 
     {% load static %}
-
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #eef1f4;
-            padding: 30px;
-            color: #333;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: auto;
-        }
-
-        h1 {
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 30px;
-            font-size: 32px;
-            color: #222;
-        }
-
-        .card {
-            background: #fff;
-            padding: 20px;
-            margin-bottom: 25px;
-            border-radius: 8px;
-            border: 1px solid #dcdcdc;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-        }
-
-        .card h2 {
-            margin-top: 0;
-            font-size: 20px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 6px;
-            color: #222;
-        }
-
-        .role-line {
-            margin: 6px 0;
-            font-size: 16px;
-        }
-
-        .notes-line {
-            margin-left: 15px;
-            color: #555;
-            font-style: italic;
-            font-size: 15px;
-        }
-
-        .pdf-button {
-            display: block;
-            width: 260px;
-            margin: 40px auto 0 auto;
-            padding: 12px 18px;
-            text-align: center;
-            background: #007bff;
-            color: white;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 17px;
-            font-weight: bold;
-        }
-
-        .pdf-button:hover {
-            background: #0056b3;
-        }
-
-        @media print {
-            .pdf-button {
-                display: none;
-            }
-            body {
-                background: white;
-            }
-        }
-    </style>
 </head>
 
-<body>
+<body class="bg-light">
 
-<div class="container">
+<div class="container bg-white p-4 rounded shadow-sm" style="max-width: 900px; margin-top: 30px;">
 
-<h1>{{ date|date:"F j, Y" }}</h1>
+    <h1 class="text-primary text-center mb-4">{{ date|date:"F j, Y" }} Assignments</h1>
 
-{% if notes %}
-<div class="card">
-    <h2>Service Notes</h2>
-    {% for n in notes %}
-        <p class="notes-line">{{ n }}</p>
-    {% endfor %}
-</div>
-{% endif %}
-
-{% if sun_am %}
-<div class="card">
-    <h2>Sunday Morning</h2>
-    {% for a in sun_am %}
-        <div class="role-line">
-            <strong>{{ a.role.name }}:</strong>
-            {{ a.person.first_name }} {{ a.person.last_name }}
+    {% if notes %}
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white fw-bold">
+            Service Notes
         </div>
-        {% if a.notes %}
-            <div class="notes-line">{{ a.notes }}</div>
-        {% endif %}
-    {% endfor %}
-</div>
-{% endif %}
-
-{% if sun_pm %}
-<div class="card">
-    <h2>Sunday Evening</h2>
-    {% for a in sun_pm %}
-        <div class="role-line">
-            <strong>{{ a.role.name }}:</strong>
-            {{ a.person.first_name }} {{ a.person.last_name }}
+        <div class="card-body">
+            {% for n in notes %}
+                <p class="fst-italic text-muted mb-1">{{ n }}</p>
+            {% endfor %}
         </div>
-        {% if a.notes %}
-            <div class="notes-line">{{ a.notes }}</div>
-        {% endif %}
-    {% endfor %}
-</div>
-{% endif %}
+    </div>
+    {% endif %}
 
-{% if wed_pm %}
-<div class="card">
-    <h2>Wednesday Evening</h2>
-    {% for a in wed_pm %}
-        <div class="role-line">
-            <strong>{{ a.role.name }}:</strong>
-            {{ a.person.first_name }} {{ a.person.last_name }}
+    {% if sun_am %}
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white fw-bold">
+            Sunday Morning
         </div>
-        {% if a.notes %}
-            <div class="notes-line">{{ a.notes }}</div>
-        {% endif %}
-    {% endfor %}
-</div>
-{% endif %}
+        <div class="card-body">
+            {% for a in sun_am %}
+                <p class="mb-1">
+                    <strong>{{ a.role.name }}:</strong>
+                    {{ a.person.first_name }} {{ a.person.last_name }}
+                </p>
+                {% if a.notes %}
+                    <p class="fst-italic text-muted ms-3 mb-2">{{ a.notes }}</p>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 
-<!-- PDF PRINT BUTTON -->
-<a class="pdf-button" href="#" onclick="window.print()">Download as PDF</a>
+    {% if sun_pm %}
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white fw-bold">
+            Sunday Evening
+        </div>
+        <div class="card-body">
+            {% for a in sun_pm %}
+                <p class="mb-1">
+                    <strong>{{ a.role.name }}:</strong>
+                    {{ a.person.first_name }} {{ a.person.last_name }}
+                </p>
+                {% if a.notes %}
+                    <p class="fst-italic text-muted ms-3 mb-2">{{ a.notes }}</p>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if wed_pm %}
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white fw-bold">
+            Wednesday Evening
+        </div>
+        <div class="card-body">
+            {% for a in wed_pm %}
+                <p class="mb-1">
+                    <strong>{{ a.role.name }}:</strong>
+                    {{ a.person.first_name }} {{ a.person.last_name }}
+                </p>
+                {% if a.notes %}
+                    <p class="fst-italic text-muted ms-3 mb-2">{{ a.notes }}</p>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a class="btn btn-primary btn-lg" href="#" onclick="window.print()">Download as PDF</a>
+    </div>
 
 </div>
+
+<style>
+@media print {
+    body {
+        background: white !important;
+    }
+    .btn {
+        display: none !important;
+    }
+    .container {
+        box-shadow: none !important;
+        border: none !important;
+    }
+}
+</style>
 
 </body>
 </html>

@@ -3,239 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ month_name }} {{ year }} Assignments</title>
+
+    {% load static %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <style>
-        body {
-            margin: 0;
-            padding: 25px;
-            background: url('/static/images/login_bg.jpg') no-repeat center center/cover;
-            font-family: "Georgia", serif;
-            color: #f5f5f5;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.55);
-            z-index: -1;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 35px;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 42px;
-            color: #ffd700;
-            text-shadow: 0 0 10px #b8860b;
-        }
-
-        .header h2 {
-            margin: 5px 0;
-            font-size: 26px;
-            color: #ffd700;
-            font-style: italic;
-        }
-
-        .header h3 {
-            margin: 5px 0;
-            font-size: 22px;
-            color: #ffec8b;
-        }
-
-        .card {
-            background: rgba(0, 0, 0, 0.55);
-            padding: 20px;
-            margin-bottom: 25px;
-            border-radius: 12px;
-            border: 2px solid #b8860b;
-            box-shadow: 0 0 12px rgba(255, 215, 0, 0.25);
-        }
-
-        .card h4 {
-            margin-top: 0;
-            font-size: 22px;
-            color: #ffd700;
-            border-bottom: 1px solid #b8860b;
-            padding-bottom: 6px;
-            text-shadow: 0 0 6px #b8860b;
-        }
-
-        .role-line {
-            margin: 6px 0;
-            font-size: 18px;
-        }
-
-        .role-line strong {
-            color: #ffd700;
-        }
-
-        .service-title {
-            font-weight: bold;
-            margin-top: 12px;
-            font-size: 19px;
-            color: #ffec8b;
-        }
-
-        .notes-line {
-            margin-left: 15px;
-            color: #ffec8b;
-            font-style: italic;
-            font-size: 16px;
-        }
-
-        .pdf-button {
-            display: block;
-            width: 260px;
-            margin: 40px auto;
-            padding: 14px 20px;
-            text-align: center;
-            background: linear-gradient(90deg, #b8860b, #ffd700);
-            color: #000;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-        }
-
-        .pdf-button:hover {
-            background: linear-gradient(90deg, #d4a017, #ffdf00);
-        }
-
-        @media print {
-            .pdf-button {
-                display: none;
-            }
-            body {
-                background: white !important;
-                color: black !important;
-            }
-            .card {
-                background: white !important;
-                border: 1px solid #000 !important;
-                box-shadow: none !important;
-            }
-            .header h1, .header h2, .header h3 {
-                color: black !important;
-                text-shadow: none !important;
-            }
-        }
-    </style>
 </head>
 
-<body>
+<body class="bg-light">
 
-<div class="header">
-    <h1>Pioneer church of Christ</h1>
-    <h2>Worship Assignments</h2>
-    <h3>{{ month_name }} {{ year }}</h3>
-</div>
+<div class="container bg-white p-4 rounded shadow-sm">
 
-<!-- MONTHLY ASSIGNMENTS -->
-<div class="card">
-    <h4>Monthly Assignments</h4>
+    <!-- HEADER -->
+    <div class="text-center mb-4">
+        <h1 class="text-primary mb-2">Pioneer church of Christ</h1>
+        <h2 class="text-secondary mb-1">Worship Assignments</h2>
+        <h3 class="text-muted">{{ month_name }} {{ year }}</h3>
+    </div>
 
-    {% for m in monthly_roles %}
-        <div class="role-line">
-            <strong>{{ m.role.name }}:</strong>
-            {{ m.person.first_name }} {{ m.person.last_name }}
+    <!-- MONTHLY ASSIGNMENTS -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white fw-bold">
+            Monthly Assignments
         </div>
-
-        {% if m.notes %}
-            <div class="notes-line">{{ m.notes }}</div>
-        {% endif %}
-    {% empty %}
-        <p>No monthly assignments found.</p>
-    {% endfor %}
-</div>
-
-<!-- SUNDAY ASSIGNMENTS -->
-{% for date, services in sundays.items %}
-<div class="card">
-    <h4>Sunday — {{ date|date:"F j" }}</h4>
-
-    {% if services.notes %}
-        {% for note in services.notes %}
-            <div class="notes-line">{{ note }}</div>
-        {% endfor %}
-    {% endif %}
-
-    <div class="service-title">Sunday Morning</div>
-    {% for a in services.AM %}
-        <div class="role-line">
-            <strong>{{ a.role.name }}:</strong>
-            {{ a.person.first_name }} {{ a.person.last_name }}
+        <div class="card-body">
+            {% for m in monthly_roles %}
+                <p class="mb-1">
+                    <strong>{{ m.role.name }}:</strong>
+                    {{ m.person.first_name }} {{ m.person.last_name }}
+                </p>
+                {% if m.notes %}
+                    <p class="fst-italic text-muted ms-3 mb-2">{{ m.notes }}</p>
+                {% endif %}
+            {% empty %}
+                <p class="text-muted mb-0">No monthly assignments found.</p>
+            {% endfor %}
         </div>
+    </div>
 
-        {% if a.notes %}
-            <div class="notes-line">{{ a.notes }}</div>
-        {% endif %}
-    {% empty %}
-        <p>No morning assignments.</p>
-    {% endfor %}
-
-    <div class="service-title">Sunday Evening</div>
-    {% for a in services.PM %}
-        <div class="role-line">
-            <strong>{{ a.role.name }}:</strong>
-            {{ a.person.first_name }} {{ a.person.last_name }}
+    <!-- SUNDAY ASSIGNMENTS -->
+    {% for date, services in sundays.items %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white fw-bold">
+            Sunday — {{ date|date:"F j" }}
         </div>
+        <div class="card-body">
 
-        {% if a.notes %}
-            <div class="notes-line">{{ a.notes }}</div>
-        {% endif %}
-    {% empty %}
-        <p>No evening assignments.</p>
-    {% endfor %}
-</div>
-{% endfor %}
+            {% if services.notes %}
+                {% for note in services.notes %}
+                    <p class="fst-italic text-muted mb-2">{{ note }}</p>
+                {% endfor %}
+            {% endif %}
 
-<!-- WEDNESDAY ASSIGNMENTS -->
-{% for date, items in wednesdays.items %}
-<div class="card">
-    <h4>Wednesday — {{ date|date:"F j" }}</h4>
+            <h5 class="fw-bold mt-2">Sunday Morning</h5>
+            {% for a in services.AM %}
+                <p class="mb-1">
+                    <strong>{{ a.role.name }}:</strong>
+                    {{ a.person.first_name }} {{ a.person.last_name }}
+                </p>
+                {% if a.notes %}
+                    <p class="fst-italic text-muted ms-3 mb-2">{{ a.notes }}</p>
+                {% endif %}
+            {% empty %}
+                <p class="text-muted mb-2">No morning assignments.</p>
+            {% endfor %}
 
-    {% if items.notes %}
-        {% for note in items.notes %}
-            <div class="notes-line">{{ note }}</div>
-        {% endfor %}
-    {% endif %}
-
-    {% for a in items.items %}
-        <div class="role-line">
-            <strong>{{ a.role.name }}:</strong>
-            {{ a.person.first_name }} {{ a.person.last_name }}
+            <h5 class="fw-bold mt-3">Sunday Evening</h5>
+            {% for a in services.PM %}
+                <p class="mb-1">
+                    <strong>{{ a.role.name }}:</strong>
+                    {{ a.person.first_name }} {{ a.person.last_name }}
+                </p>
+                {% if a.notes %}
+                    <p class="fst-italic text-muted ms-3 mb-2">{{ a.notes }}</p>
+                {% endif %}
+            {% empty %}
+                <p class="text-muted mb-0">No evening assignments.</p>
+            {% endfor %}
         </div>
-
-        {% if a.notes %}
-            <div class="notes-line">{{ a.notes }}</div>
-        {% endif %}
-    {% empty %}
-        <p>No Wednesday assignments.</p>
+    </div>
     {% endfor %}
-</div>
-{% endfor %}
 
-<!-- NOTES -->
-<div class="card">
-    <h4>Notes</h4>
-    <p>• Song Leader is responsible for any opening announcements.</p>
-    <p>• Scheduled speaker is to select the Scripture reading and give it to the reader.</p>
-    <p>• Wednesday announcements are the responsibility of the Bible class teacher (Song Leader on singing night).</p>
-    <p>• All assignments are subject to change the day of the service due to availability.</p>
+    <!-- WEDNESDAY ASSIGNMENTS -->
+    {% for date, items in wednesdays.items %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white fw-bold">
+            Wednesday — {{ date|date:"F j" }}
+        </div>
+        <div class="card-body">
+
+            {% if items.notes %}
+                {% for note in items.notes %}
+                    <p class="fst-italic text-muted mb-2">{{ note }}</p>
+                {% endfor %}
+            {% endif %}
+
+            {% for a in items.items %}
+                <p class="mb-1">
+                    <strong>{{ a.role.name }}:</strong>
+                    {{ a.person.first_name }} {{ a.person.last_name }}
+                </p>
+                {% if a.notes %}
+                    <p class="fst-italic text-muted ms-3 mb-2">{{ a.notes }}</p>
+                {% endif %}
+            {% empty %}
+                <p class="text-muted mb-0">No Wednesday assignments.</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- NOTES -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white fw-bold">
+            Notes
+        </div>
+        <div class="card-body">
+            <p>• Song Leader is responsible for any opening announcements.</p>
+            <p>• Scheduled speaker is to select the Scripture reading and give it to the reader.</p>
+            <p>• Wednesday announcements are the responsibility of the Bible class teacher (Song Leader on singing night).</p>
+            <p>• All assignments are subject to change the day of the service due to availability.</p>
+        </div>
+    </div>
+
+    <!-- PDF VIEW BUTTON -->
+    <div class="text-center my-4">
+        <a class="btn btn-primary btn-lg" href="#" target="_blank">
+            View Monthly PDF
+        </a>
+    </div>
+
 </div>
 
-<!-- PDF.js VIEWER BUTTON -->
-<a class="pdf-button"
-    View Monthly PDF
-</a>
+<!-- PRINT STYLES -->
+<style>
+@media print {
+    body {
+        background: white !important;
+    }
+    .container {
+        box-shadow: none !important;
+        border: none !important;
+    }
+    .card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+    }
+    .card-header {
+        background: #fff !important;
+        color: #000 !important;
+    }
+    .text-primary,
+    .text-secondary,
+    .text-muted {
+        color: #000 !important;
+    }
+    .btn {
+        display: none !important;
+    }
+}
+</style>
 
 </body>
 </html>
