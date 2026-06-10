@@ -28,7 +28,7 @@ def logout_view(request):
 def member_home(request):
     today = date.today()
 
-    return render(request, "members_home.html", {
+    return render(request, "member_home.html", {
         "today": today,
         "year": today.year,
         "month": today.month,
