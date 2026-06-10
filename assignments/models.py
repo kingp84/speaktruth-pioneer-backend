@@ -4,10 +4,10 @@ from directory.models import DirectoryEntry, Role
 
 class Assignment(models.Model):
     SERVICE_TYPES = [
-        ('MONTHLY', 'Monthly Assignments'),
-        ('SUNDAY MORNING', 'Sunday Morning'),
-        ('SUNDAY EVENING', 'Sunday Evening'),
-        ('WEDNESDAY EVENING', 'Wednesday Evening'),
+        ('MONTHLY', 'MONTHLY ASSIGNMENTS'),
+        ('SUNDAY MORNING', 'SUNDAY MORNING'),
+        ('SUNDAY EVENING', 'SUNDAY EVENING'),
+        ('WEDNESDAY EVENING', 'WEDNESDAY EVENING'),
     ]
 
     date = models.DateField()
