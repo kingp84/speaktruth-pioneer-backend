@@ -11,50 +11,10 @@
 <body class="bg-light">
 
 <!-- NAVBAR (Lumen Blue Theme) -->
-<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-  <div class="container">
-
-    <a class="navbar-brand fw-bold" href="{% url 'member_home' %}">Pioneer & Bell</a>
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navMenu">
-      <ul class="navbar-nav me-auto">
-
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'member_home' %}">Dashboard</a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'monthly_assignments' year=today.year month=today.month %}">
-               This Month's Assignments
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'assignment_calendar' %}">
-               Assignments Calendar
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link active" href="{% url 'directory' %}">
-               Directory
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link text-warning fw-bold" href="{% url 'logout' %}">
-               Logout
-            </a>
-        </li>
-
-      </ul>
+<nav class="navbar navbar-dark bg-primary mb-4">
+    <div class="container-fluid justify-content-center">
+        <span class="navbar-brand mb-0 h1 fw-bold">Pioneer & Bell</span>
     </div>
-
-  </div>
 </nav>
 
 <!-- MAIN CONTENT -->
