@@ -64,6 +64,8 @@ def monthly_assignments(request, year, month):
                 if note not in wednesdays[dt]["notes"]:
                     wednesdays[dt]["notes"].append(note)
 
+    today = date.today()
+
     context = {
         "year": year,
         "month": month,
@@ -71,7 +73,9 @@ def monthly_assignments(request, year, month):
         "monthly_roles": monthly_roles,
         "sundays": dict(sorted(sundays.items())),
         "wednesdays": dict(sorted(wednesdays.items())),
-        "today": date.today(),
+        "today": today,
+        "current_year": today.year,
+        "current_month": today.month,
     }
 
     return render(request, "assignments/monthly_assignments.html", context)
@@ -125,6 +129,8 @@ def monthly_assignments_pdf(request, year, month):
                 if note not in wednesdays[dt]["notes"]:
                     wednesdays[dt]["notes"].append(note)
 
+    today = date.today()
+
     context = {
         "year": year,
         "month": month,
@@ -132,7 +138,9 @@ def monthly_assignments_pdf(request, year, month):
         "monthly_roles": monthly_roles,
         "sundays": dict(sorted(sundays.items())),
         "wednesdays": dict(sorted(wednesdays.items())),
-        "today": date.today(),
+        "today": today,
+        "current_year": today.year,
+        "current_month": today.month,
     }
 
     html_string = render_to_string("assignments/monthly_assignments.html", context)
@@ -149,7 +157,6 @@ def monthly_assignments_pdf(request, year, month):
 def assignment_calendar(request):
     today = timezone.now().date()
     return redirect("assignment_calendar_month", year=today.year, month=today.month)
-
 
 # ---------------------------------------------------------
 # MONTHLY CALENDAR GRID VIEW
