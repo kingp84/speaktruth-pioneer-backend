@@ -121,7 +121,7 @@ def monthly_assignments_pdf(request, year, month):
                 sundays[dt]["Evening"] = []
 
         elif a.service_type == "Wednesday Evening":
-            wednesdays.setdefault(dt, {"items": [], "notes": []})
+            wednesdays.setdefault(dt, {"Wednesday": [], "items": [], "notes": []})
             wednesdays[dt]["items"].append(a)
 
             if is_second_wednesday(dt):
@@ -206,9 +206,9 @@ def daily_assignments(request, year, month, day):
 
     assignments = Assignment.objects.filter(date=dt).select_related("person", "role")
 
-    sun_am = assignments.filter(service_type="Sunday Morning")
-    sun_pm = assignments.filter(service_type="Sunday Evening")
-    wed_pm = assignments.filter(service_type="Wednesday Evening")
+    morning = assignments.filter(service_type="Sunday Morning")
+    evening = assignments.filter(service_type="Sunday Evening")
+    wednesday = assignments.filter(service_type="Wednesday Evening")
 
     notes = []
 
@@ -220,9 +220,9 @@ def daily_assignments(request, year, month, day):
 
     context = {
         "date": dt,
-        "sun_am": sun_am,
-        "sun_pm": sun_pm,
-        "wed_pm": wed_pm,
+        "Morning": morning,
+        "Evening": evening,
+        "Wednesday": wednesday,
         "notes": notes,
         "today": date.today(),
         "year": year,
@@ -243,9 +243,9 @@ def daily_assignments_pdf(request, year, month, day):
 
     assignments = Assignment.objects.filter(date=dt).select_related("person", "role")
 
-    sun_am = assignments.filter(service_type="Sunday Morning")
-    sun_pm = assignments.filter(service_type="Sunday Evening")
-    wed_pm = assignments.filter(service_type="Wednesday Evening")
+    morning = assignments.filter(service_type="Sunday Morning")
+    evening = assignments.filter(service_type="Sunday Evening")
+    wednesday = assignments.filter(service_type="Wednesday Evening")
 
     notes = []
 
@@ -257,9 +257,9 @@ def daily_assignments_pdf(request, year, month, day):
 
     context = {
         "date": dt,
-        "sun_am": sun_am,
-        "sun_pm": sun_pm,
-        "wed_pm": wed_pm,
+        "Morning": morning,
+        "Evening": evening,
+        "Wednesday": wednesday,
         "notes": notes,
     }
 
