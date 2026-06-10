@@ -10,6 +10,13 @@
 
 <body class="bg-light">
 
+<!-- SIMPLE CENTERED HEADER -->
+<nav class="navbar navbar-dark bg-primary mb-4">
+    <div class="container-fluid justify-content-center">
+        <span class="navbar-brand mb-0 h1 fw-bold">Pioneer & Bell</span>
+    </div>
+</nav>
+
 <div class="container bg-white p-4 rounded shadow-sm" style="max-width: 900px; margin-top: 30px;">
 
     <h1 class="text-primary text-center mb-4">{{ date|date:"F j, Y" }} Assignments</h1>
@@ -104,9 +111,9 @@
     }
 }
 </style>
-<div class="text-muted small">
-    Viewing assignments for: {{ today|date:"F j, Y" }}
-</div>
+
+<!-- Hidden today variable to satisfy any leftover logic -->
+<span style="display:none;">{{ today }}</span>
 
 </body>
 </html>
