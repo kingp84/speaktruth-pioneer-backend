@@ -13,8 +13,7 @@ try:
     from weasyprint import HTML
     WEASYPRINT_AVAILABLE = True
 except ImportError:
-    EASYPRINT_AVAILABLE = False
-
+    WEASYPRINT_AVAILABLE = False
 
 
 # ---------------------------------------------------------
@@ -28,7 +27,7 @@ def monthly_assignments(request, year, month):
         date__month=month
     ).select_related("person", "role")
 
-    monthly_roles = assignments.filter(service_type="MONTHLY")
+    monthly_roles = assignments.filter(service_type="Monthly")
 
     sundays = {}
     wednesdays = {}
@@ -37,10 +36,10 @@ def monthly_assignments(request, year, month):
         dt = a.date
 
         # Sunday assignments
-        if a.service_type in ["SUN_AM", "SUN_PM"]:
+        if a.service_type in ["Sunday Morning", "Sunday Evening"]:
             sundays.setdefault(dt, {"AM": [], "PM": [], "notes": []})
 
-            if a.service_type == "SUN_AM":
+            if a.service_type == "Sunday Morning":
                 sundays[dt]["AM"].append(a)
             else:
                 sundays[dt]["PM"].append(a)
@@ -54,7 +53,7 @@ def monthly_assignments(request, year, month):
                 sundays[dt]["PM"] = []  # No PM service on 5th Sunday
 
         # Wednesday assignments
-        elif a.service_type == "WED_PM":
+        elif a.service_type == "Wednesday Evening":
             wednesdays.setdefault(dt, {"items": [], "notes": []})
             wednesdays[dt]["items"].append(a)
 
@@ -81,12 +80,14 @@ def monthly_assignments_pdf(request, year, month):
     if not WEASYPRINT_AVAILABLE:
         return HttpResponse("PDF generation is not available on this server.", status=501)
 
+    month_name = date(year, month, 1).strftime("%B")
+
     assignments = Assignment.objects.filter(
         date__year=year,
         date__month=month
     ).select_related("person", "role")
 
-    monthly_roles = assignments.filter(service_type="MONTHLY")
+    monthly_roles = assignments.filter(service_type="Monthly")
 
     sundays = {}
     wednesdays = {}
@@ -94,10 +95,10 @@ def monthly_assignments_pdf(request, year, month):
     for a in assignments:
         dt = a.date
 
-        if a.service_type in ["SUN_AM", "SUN_PM"]:
+        if a.service_type in ["Sunday Morning", "Sunday Evening"]:
             sundays.setdefault(dt, {"AM": [], "PM": [], "notes": []})
 
-            if a.service_type == "SUN_AM":
+            if a.service_type == "Sunday Morning":
                 sundays[dt]["AM"].append(a)
             else:
                 sundays[dt]["PM"].append(a)
@@ -109,7 +110,7 @@ def monthly_assignments_pdf(request, year, month):
                     )
                 sundays[dt]["PM"] = []
 
-        elif a.service_type == "WED_PM":
+        elif a.service_type == "Wednesday Evening":
             wednesdays.setdefault(dt, {"items": [], "notes": []})
             wednesdays[dt]["items"].append(a)
 
@@ -160,11 +161,9 @@ def assignment_calendar_month(request, year, month):
 
     assignment_dates = set(a.date.strftime("%Y-%m-%d") for a in assignments)
 
-    # Previous month/year
     prev_month = 12 if month == 1 else month - 1
     prev_year = year - 1 if month == 1 else year
 
-    # Next month/year
     next_month = 1 if month == 12 else month + 1
     next_year = year + 1 if month == 12 else year
 
@@ -192,9 +191,9 @@ def daily_assignments(request, year, month, day):
 
     assignments = Assignment.objects.filter(date=dt).select_related("person", "role")
 
-    sun_am = assignments.filter(service_type="SUN_AM")
-    sun_pm = assignments.filter(service_type="SUN_PM")
-    wed_pm = assignments.filter(service_type="WED_PM")
+    sun_am = assignments.filter(service_type="Sunday Morning")
+    sun_pm = assignments.filter(service_type="Sunday Evening")
+    wed_pm = assignments.filter(service_type="Wednesday Evening")
 
     notes = []
 
@@ -220,7 +219,6 @@ def daily_assignments(request, year, month, day):
     return render(request, "assignments/daily_assignments.html", context)
 
 
-
 # ---------------------------------------------------------
 # DAILY ASSIGNMENTS PDF
 # ---------------------------------------------------------
@@ -228,11 +226,13 @@ def daily_assignments_pdf(request, year, month, day):
     if not WEASYPRINT_AVAILABLE:
         return HttpResponse("PDF generation is not available on this server.", status=501)
 
+    dt = date(year, month, day)
+
     assignments = Assignment.objects.filter(date=dt).select_related("person", "role")
 
-    sun_am = assignments.filter(service_type="SUN_AM")
-    sun_pm = assignments.filter(service_type="SUN_PM")
-    wed_pm = assignments.filter(service_type="WED_PM")
+    sun_am = assignments.filter(service_type="Sunday Morning")
+    sun_pm = assignments.filter(service_type="Sunday Evening")
+    wed_pm = assignments.filter(service_type="Wednesday Evening")
 
     notes = []
 
