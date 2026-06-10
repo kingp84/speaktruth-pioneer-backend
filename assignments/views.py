@@ -27,7 +27,7 @@ def monthly_assignments(request, year, month):
         date__month=month
     ).select_related("person", "role")
 
-    monthly_roles = assignments.filter(service_type="Monthly")
+    monthly_roles = assignments.filter(service_type="MONTHLY")
 
     sundays = {}
     wednesdays = {}
@@ -36,13 +36,13 @@ def monthly_assignments(request, year, month):
         dt = a.date
 
         # Sunday assignments
-        if a.service_type in ["Sunday Morning", "Sunday Evening"]:
-            sundays.setdefault(dt, {"Morning": [], "Evening": [], "notes": []})
+        if a.service_type in ["SUNDAY EVENING", "SUNDAY EVENING"]:
+            sundays.setdefault(dt, {"MORNING": [], "EVENING": [], "notes": []})
 
-            if a.service_type == "Sunday Morning":
-                sundays[dt]["Morning"].append(a)
+            if a.service_type == "SUNDAY MORNING":
+                sundays[dt]["MORNING"].append(a)
             else:
-                sundays[dt]["Evening"].append(a)
+                sundays[dt]["EVENING"].append(a)
 
             # 5th Sunday logic
             if is_fifth_sunday(dt):
@@ -52,10 +52,10 @@ def monthly_assignments(request, year, month):
                 )
                 if note not in sundays[dt]["notes"]:
                     sundays[dt]["notes"].append(note)
-                sundays[dt]["Evening"] = []  # No PM service on 5th Sunday
+                sundays[dt]["EVENING"] = []  # No PM service on 5th Sunday
 
         # Wednesday assignments
-        elif a.service_type == "Wednesday Evening":
+        elif a.service_type == "WEDNESDAY EVENING":
             wednesdays.setdefault(dt, {"items": [], "notes": []})
             wednesdays[dt]["items"].append(a)
 
@@ -95,7 +95,7 @@ def monthly_assignments_pdf(request, year, month):
         date__month=month
     ).select_related("person", "role")
 
-    monthly_roles = assignments.filter(service_type="Monthly")
+    monthly_roles = assignments.filter(service_type="MONTHLY")
 
     sundays = {}
     wednesdays = {}
@@ -103,13 +103,13 @@ def monthly_assignments_pdf(request, year, month):
     for a in assignments:
         dt = a.date
 
-        if a.service_type in ["Sunday Morning", "Sunday Evening"]:
-            sundays.setdefault(dt, {"Morning": [], "Evening": [], "notes": []})
+        if a.service_type in ["SUNDAY MORNING", "SUNDAY EVENING"]:
+            sundays.setdefault(dt, {"MORNING": [], "EVENING": [], "notes": []})
 
-            if a.service_type == "Sunday Morning":
-                sundays[dt]["Morning"].append(a)
+            if a.service_type == "SUNDAY MORNING":
+                sundays[dt]["MORNING"].append(a)
             else:
-                sundays[dt]["Evening"].append(a)
+                sundays[dt]["EVENING"].append(a)
 
             if is_fifth_sunday(dt):
                 note = (
@@ -118,10 +118,10 @@ def monthly_assignments_pdf(request, year, month):
                 )
                 if note not in sundays[dt]["notes"]:
                     sundays[dt]["notes"].append(note)
-                sundays[dt]["Evening"] = []
+                sundays[dt]["EVENING"] = []
 
-        elif a.service_type == "Wednesday Evening":
-            wednesdays.setdefault(dt, {"Wednesday": [], "items": [], "notes": []})
+        elif a.service_type == "WEDNESDAY EVENING":
+            wednesdays.setdefault(dt, {"WEDNESDAY": [], "items": [], "notes": []})
             wednesdays[dt]["items"].append(a)
 
             if is_second_wednesday(dt):
@@ -206,9 +206,9 @@ def daily_assignments(request, year, month, day):
 
     assignments = Assignment.objects.filter(date=dt).select_related("person", "role")
 
-    morning = assignments.filter(service_type="Sunday Morning")
-    evening = assignments.filter(service_type="Sunday Evening")
-    wednesday = assignments.filter(service_type="Wednesday Evening")
+    morning = assignments.filter(service_type="SUNDAY MORNING")
+    evening = assignments.filter(service_type="SUNDAY EVENING")
+    wednesday = assignments.filter(service_type="WEDNESDAY EVENING")
 
     notes = []
 
@@ -220,9 +220,9 @@ def daily_assignments(request, year, month, day):
 
     context = {
         "date": dt,
-        "Morning": morning,
-        "Evening": evening,
-        "Wednesday": wednesday,
+        "MORNING": morning,
+        "EVENING": evening,
+        "WEDNESDAY": wednesday,
         "notes": notes,
         "today": date.today(),
         "year": year,
@@ -243,9 +243,9 @@ def daily_assignments_pdf(request, year, month, day):
 
     assignments = Assignment.objects.filter(date=dt).select_related("person", "role")
 
-    morning = assignments.filter(service_type="Sunday Morning")
-    evening = assignments.filter(service_type="Sunday Evening")
-    wednesday = assignments.filter(service_type="Wednesday Evening")
+    morning = assignments.filter(service_type="SUNDAY MORNING")
+    evening = assignments.filter(service_type="SUNDAY EVENING")
+    wednesday = assignments.filter(service_type="WEDNESDAY EVENING")
 
     notes = []
 
@@ -257,9 +257,9 @@ def daily_assignments_pdf(request, year, month, day):
 
     context = {
         "date": dt,
-        "Morning": morning,
-        "Evening": evening,
-        "Wednesday": wednesday,
+        "MORNING": morning,
+        "EVENING": evening,
+        "WEDNESDAY": wednesday,
         "notes": notes,
     }
 

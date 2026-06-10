@@ -4,10 +4,10 @@ from directory.models import DirectoryEntry, Role
 
 class Assignment(models.Model):
     SERVICE_TYPES = [
-        ('MONTHLY', 'Monthly Assignment'),
-        ('Sunday Morning', 'Sunday Morning'),
-        ('Sunday Evening', 'Sunday Evening'),
-        ('Wednesday Evening', 'Wednesday Evening'),
+        ('MONTHLY', 'Monthly Assignments'),
+        ('SUNDAY MORNING', 'Sunday Morning'),
+        ('SUNDAY EVENING', 'Sunday Evening'),
+        ('WEDNESDAY EVENING', 'Wednesday Evening'),
     ]
 
     date = models.DateField()
@@ -27,11 +27,11 @@ class Assignment(models.Model):
 
     @property
     def is_sunday(self):
-        return self.service_type in ["Sunday Morning", "Sunday Evening"]
+        return self.service_type in ["SUNDAY MORNIGN", "SUNDAY EVENING"]
 
     @property
     def is_wednesday(self):
-        return self.service_type == "Wednesday Evening"
+        return self.service_type == "WEDNESDAY EVENING"
 
     @property
     def is_monthly(self):
