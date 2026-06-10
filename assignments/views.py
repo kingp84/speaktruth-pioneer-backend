@@ -56,7 +56,7 @@ def monthly_assignments(request, year, month):
 
         # Wednesday assignments
         elif a.service_type == "WEDNESDAY EVENING":
-            wednesdays.setdefault(dt, {"WEDNESDAY", "items": [], "notes": []})
+            wednesdays.setdefault(dt, {"WEDNESDAY": [], "items": [], "notes": []})
             wednesdays[dt]["items"].append(a)
 
             if is_second_wednesday(dt):
