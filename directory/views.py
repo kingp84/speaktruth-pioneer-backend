@@ -1,9 +1,8 @@
 from datetime import date
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.template.loader import render_to_string
-from urllib.parse import quote
 
 from .models import DirectoryEntry
 
@@ -21,10 +20,10 @@ def directory_view(request):
     members = DirectoryEntry.objects.all().order_by("last_name", "first_name")
 
     context = {
-        "members": members,
-        "today": today,
-        "year": today.year,
-        "month": today.month,
+        "members": members,      # <-- correct queryset name
+        "today": today,          # <-- required for navbar
+        "year": today.year,      # <-- required for navbar
+        "month": today.month,    # <-- required for navbar
     }
 
     return render(request, "directory/directory.html", context)
@@ -47,5 +46,5 @@ def directory_pdf(request):
     pdf_file = HTML(string=html_string).write_pdf()
 
     response = HttpResponse(pdf_file, content_type="application/pdf")
-    response["Content-Disposition"] = 'attachment; filename=\"directory.pdf\"'
+    response["Content-Disposition"] = 'attachment; filename="directory.pdf"'
     return response
