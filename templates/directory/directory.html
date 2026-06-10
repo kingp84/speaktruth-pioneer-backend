@@ -10,9 +10,9 @@
 
 <body class="bg-light">
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
-  <div class="container-fluid">
+<!-- NAVBAR (Lumen Blue Theme) -->
+<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+  <div class="container">
 
     <a class="navbar-brand fw-bold" href="{% url 'member_home' %}">Pioneer & Bell</a>
 
@@ -21,7 +21,7 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navMenu">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <ul class="navbar-nav me-auto">
 
         <li class="nav-item">
             <a class="nav-link" href="{% url 'member_home' %}">Dashboard</a>
@@ -60,7 +60,7 @@
 <!-- MAIN CONTENT -->
 <div class="container bg-white p-4 rounded shadow-sm">
 
-    <h1 class="text-primary mb-3">Member Directory</h1>
+    <h1 class="text-primary mb-4">Member Directory</h1>
 
     <!-- SEARCH BAR -->
     <div class="mb-4">
@@ -71,40 +71,39 @@
             placeholder="Search by name, phone, email, or role">
     </div>
 
-<!-- DIRECTORY TABLE -->
-<div class="table-responsive">
-    <table class="table table-striped table-hover" id="directoryTable">
-        <thead class="table-primary">
-            <tr>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Address</th>
-                <th>Status</th>
-                <th>Roles</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for entry in members %}
-            <tr>
-                <td>{{ entry.first_name }} {{ entry.last_name }}</td>
-                <td>{{ entry.phone }}</td>
-                <td>{{ entry.email }}</td>
-                <td>{{ entry.address }}</td>
-                <td>{{ entry.status }}</td>
-                <td>
-                    {% for r in entry.roles.all %}
-                        {{ r.name }}{% if not forloop.last %}, {% endif %}
-                    {% empty %}
-                        None
-                    {% endfor %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
+    <!-- DIRECTORY TABLE -->
+    <div class="table-responsive">
+        <table class="table table-striped table-hover" id="directoryTable">
+            <thead class="table-primary">
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th>Roles</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in members %}
+                <tr>
+                    <td>{{ entry.first_name }} {{ entry.last_name }}</td>
+                    <td>{{ entry.phone }}</td>
+                    <td>{{ entry.email }}</td>
+                    <td>{{ entry.address }}</td>
+                    <td>{{ entry.status }}</td>
+                    <td>
+                        {% for r in entry.roles.all %}
+                            {{ r.name }}{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            None
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 </div>
 
