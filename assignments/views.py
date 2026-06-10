@@ -37,12 +37,12 @@ def monthly_assignments(request, year, month):
 
         # Sunday assignments
         if a.service_type in ["Sunday Morning", "Sunday Evening"]:
-            sundays.setdefault(dt, {"AM": [], "PM": [], "notes": []})
+            sundays.setdefault(dt, {"Morning": [], "Evening": [], "notes": []})
 
             if a.service_type == "Sunday Morning":
-                sundays[dt]["AM"].append(a)
+                sundays[dt]["Morning"].append(a)
             else:
-                sundays[dt]["PM"].append(a)
+                sundays[dt]["Evening"].append(a)
 
             # 5th Sunday logic
             if is_fifth_sunday(dt):
@@ -52,7 +52,7 @@ def monthly_assignments(request, year, month):
                 )
                 if note not in sundays[dt]["notes"]:
                     sundays[dt]["notes"].append(note)
-                sundays[dt]["PM"] = []  # No PM service on 5th Sunday
+                sundays[dt]["Evening"] = []  # No PM service on 5th Sunday
 
         # Wednesday assignments
         elif a.service_type == "Wednesday Evening":
@@ -100,12 +100,12 @@ def monthly_assignments_pdf(request, year, month):
         dt = a.date
 
         if a.service_type in ["Sunday Morning", "Sunday Evening"]:
-            sundays.setdefault(dt, {"AM": [], "PM": [], "notes": []})
+            sundays.setdefault(dt, {"Morning": [], "Evening": [], "notes": []})
 
             if a.service_type == "Sunday Morning":
-                sundays[dt]["AM"].append(a)
+                sundays[dt]["Morning"].append(a)
             else:
-                sundays[dt]["PM"].append(a)
+                sundays[dt]["Evening"].append(a)
 
             if is_fifth_sunday(dt):
                 note = (
@@ -114,7 +114,7 @@ def monthly_assignments_pdf(request, year, month):
                 )
                 if note not in sundays[dt]["notes"]:
                     sundays[dt]["notes"].append(note)
-                sundays[dt]["PM"] = []
+                sundays[dt]["Evening"] = []
 
         elif a.service_type == "Wednesday Evening":
             wednesdays.setdefault(dt, {"items": [], "notes": []})
