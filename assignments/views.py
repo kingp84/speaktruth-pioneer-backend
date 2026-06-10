@@ -22,11 +22,6 @@ except ImportError:
 def monthly_assignments(request, year, month):
     month_name = date(year, month, 1).strftime("%B")
 
-    today = date.today()
-    context["today"] = today
-    context["year"] = today.year
-    context["month"] = today.month
-
     assignments = Assignment.objects.filter(
         date__year=year,
         date__month=month
@@ -51,10 +46,12 @@ def monthly_assignments(request, year, month):
 
             # 5th Sunday logic
             if is_fifth_sunday(dt):
-                if "Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service at 6p." not in sundays[dt]["notes"]:
-                    sundays[dt]["notes"].append(
-                        "Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service at 6p."
-                    )
+                note = (
+                    "Fellowship Meal at noon. Afternoon service around 2 PM. "
+                    "No regular evening service at 6p."
+                )
+                if note not in sundays[dt]["notes"]:
+                    sundays[dt]["notes"].append(note)
                 sundays[dt]["PM"] = []  # No PM service on 5th Sunday
 
         # Wednesday assignments
@@ -63,8 +60,9 @@ def monthly_assignments(request, year, month):
             wednesdays[dt]["items"].append(a)
 
             if is_second_wednesday(dt):
-                if "Singing Night — congregational singing service." not in wednesdays[dt]["notes"]:
-                    wednesdays[dt]["notes"].append("Singing Night — congregational singing service.")
+                note = "Singing Night — congregational singing service."
+                if note not in wednesdays[dt]["notes"]:
+                    wednesdays[dt]["notes"].append(note)
 
     context = {
         "year": year,
@@ -73,6 +71,7 @@ def monthly_assignments(request, year, month):
         "monthly_roles": monthly_roles,
         "sundays": dict(sorted(sundays.items())),
         "wednesdays": dict(sorted(wednesdays.items())),
+        "today": date.today(),
     }
 
     return render(request, "assignments/monthly_assignments.html", context)
@@ -84,11 +83,6 @@ def monthly_assignments(request, year, month):
 def monthly_assignments_pdf(request, year, month):
     if not WEASYPRINT_AVAILABLE:
         return HttpResponse("PDF generation is not available on this server.", status=501)
-
-    oday = date.today()
-    context["today"] = today
-    context["year"] = today.year
-    context["month"] = today.month
 
     month_name = date(year, month, 1).strftime("%B")
 
@@ -114,10 +108,12 @@ def monthly_assignments_pdf(request, year, month):
                 sundays[dt]["PM"].append(a)
 
             if is_fifth_sunday(dt):
-                if "Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service at 6p." not in sundays[dt]["notes"]:
-                    sundays[dt]["notes"].append(
-                        "Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service at 6p."
-                    )
+                note = (
+                    "Fellowship Meal at noon. Afternoon service around 2 PM. "
+                    "No regular evening service at 6p."
+                )
+                if note not in sundays[dt]["notes"]:
+                    sundays[dt]["notes"].append(note)
                 sundays[dt]["PM"] = []
 
         elif a.service_type == "Wednesday Evening":
@@ -125,8 +121,9 @@ def monthly_assignments_pdf(request, year, month):
             wednesdays[dt]["items"].append(a)
 
             if is_second_wednesday(dt):
-                if "Singing Night — congregational singing service." not in wednesdays[dt]["notes"]:
-                    wednesdays[dt]["notes"].append("Singing Night — congregational singing service.")
+                note = "Singing Night — congregational singing service."
+                if note not in wednesdays[dt]["notes"]:
+                    wednesdays[dt]["notes"].append(note)
 
     context = {
         "year": year,
@@ -135,6 +132,7 @@ def monthly_assignments_pdf(request, year, month):
         "monthly_roles": monthly_roles,
         "sundays": dict(sorted(sundays.items())),
         "wednesdays": dict(sorted(wednesdays.items())),
+        "today": date.today(),
     }
 
     html_string = render_to_string("assignments/monthly_assignments.html", context)
@@ -152,10 +150,6 @@ def assignment_calendar(request):
     today = timezone.now().date()
     return redirect("assignment_calendar_month", year=today.year, month=today.month)
 
-    today = date.today()
-    context["today"] = today
-    context["year"] = today.year
-    context["month"] = today.month
 
 # ---------------------------------------------------------
 # MONTHLY CALENDAR GRID VIEW
@@ -164,11 +158,6 @@ def assignment_calendar_month(request, year, month):
     month_date = date(year, month, 1)
     month_name = month_date.strftime("%B")
     today = timezone.now().date()
-
-    today = date.today()
-    context["today"] = today
-    context["year"] = today.year
-    context["month"] = today.month
 
     cal = calendar.Calendar(firstweekday=6)  # Sunday start
     month_weeks = cal.monthdayscalendar(year, month)
@@ -208,11 +197,6 @@ def assignment_calendar_month(request, year, month):
 def daily_assignments(request, year, month, day):
     dt = date(year, month, day)
 
-    today = date.today()
-    context["today"] = today
-    context["year"] = today.year
-    context["month"] = today.month
-
     assignments = Assignment.objects.filter(date=dt).select_related("person", "role")
 
     sun_am = assignments.filter(service_type="Sunday Morning")
@@ -227,20 +211,15 @@ def daily_assignments(request, year, month, day):
     if is_second_wednesday(dt):
         notes.append("Singing Night — congregational singing service.")
 
-    today = date.today()
-    context["today"] = today
-    context["year"] = today.year
-    context["month"] = today.month
-
     context = {
         "date": dt,
         "sun_am": sun_am,
         "sun_pm": sun_pm,
         "wed_pm": wed_pm,
         "notes": notes,
-        "today": today,
-        "year": today.year,
-        "month": today.month,
+        "today": date.today(),
+        "year": year,
+        "month": month,
     }
 
     return render(request, "assignments/daily_assignments.html", context)
@@ -252,11 +231,6 @@ def daily_assignments(request, year, month, day):
 def daily_assignments_pdf(request, year, month, day):
     if not WEASYPRINT_AVAILABLE:
         return HttpResponse("PDF generation is not available on this server.", status=501)
-
-    today = date.today()
-    context["today"] = today
-    context["year"] = today.year
-    context["month"] = today.month
 
     dt = date(year, month, day)
 
