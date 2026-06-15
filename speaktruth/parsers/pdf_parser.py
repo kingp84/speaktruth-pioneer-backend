@@ -1,148 +1,189 @@
-import os
 import pdfplumber
-
+import re
+from datetime import datetime
+from directory.models import DirectoryEntry, Role
 from assignments.models import Assignment
-from speaktruth.parsers.normalize import (
-    get_or_create_role,
-    find_directory_entry,
-    parse_date_from_string,
-)
 
 
-def parse_assignment_pdfs(path: str) -> None:
-    print("PDF PARSER STARTED:", path)
-    filename = os.path.basename(path).lower()
+# -----------------------------
+# Helpers
+# -----------------------------
+
+def parse_date_from_header(text, year):
+    """
+    Extracts dates like 'June 7th' and returns a Python date.
+    """
+    match = re.search(r"([A-Za-z]+)\s+(\d+)(?:st|nd|rd|th)", text)
+    if not match:
+        return None
+
+    month_name = match.group(1)
+    day = int(match.group(2))
+
+    try:
+        return datetime.strptime(f"{month_name} {day} {year}", "%B %d %Y").date()
+    except:
+        return None
+
+
+def find_person(name):
+    """
+    Match a person in DirectoryEntry by first + last name.
+    """
+    parts = name.strip().split()
+    if len(parts) < 2:
+        return None
+
+    first, last = parts[0], parts[-1]
+
+    return DirectoryEntry.objects.filter(
+        first_name__iexact=first,
+        last_name__iexact=last
+    ).first()
+
+
+def find_role(role_name):
+    """
+    Match a Role object by exact name.
+    """
+    return Role.objects.filter(name__iexact=role_name.strip()).first()
+
+
+# -----------------------------
+# MAIN PARSER
+# -----------------------------
+
+def parse_assignment_pdfs(path):
+    print("ASSIGNMENT PARSER STARTED:", path)
+
+    # Determine if this is Sunday or Wednesday
+    filename = path.lower()
+
     if "sunday" in filename:
-        parse_sunday_pdf(path)
+        service_type_map = {
+            "morning": "SUNDAY MORNING",
+            "evening": "SUNDAY EVENING",
+        }
+        is_sunday = True
+        is_wednesday = False
+
     elif "wednesday" in filename:
-        parse_wednesday_pdf(path)
+        service_type_map = {
+            "evening": "WEDNESDAY EVENING",
+        }
+        is_sunday = False
+        is_wednesday = True
+
     else:
-        # If you ever combine them, you can call both here
-        parse_sunday_pdf(path)
-        parse_wednesday_pdf(path)
-
-
-def parse_sunday_pdf(path: str) -> None:
-    """
-    Expects a table like the one in '7a. July 2026 Sunday.pdf':
-    - Columns: Date, Sunday Morning, Sunday Evening
-    - Rows: Preaching, Scriptures, Song Leader, Opening Prayer, Closing Prayer
-    """
-    with pdfplumber.open(path) as pdf:
-        for page in pdf.pages:
-            tables = page.extract_tables()
-            for table in tables:
-                _parse_sunday_table(table)
-
-
-def _parse_sunday_table(table: list[list[str]]) -> None:
-    """
-    table is a list of rows; each row is a list of cell strings.
-    We look for date rows like 'July 5th', then the following role rows.
-    """
-    current_date = parse_date_from_string(cells[0], default_year=2026)
-
-    for row in table:
-        cells = [c.strip() if isinstance(c, str) else "" for c in row]
-        if not any(cells):
-            continue
-
-        # Date row: e.g. ['July 5th', 'Sunday Morning', 'Sunday Evening']
-        if cells[0].lower().startswith("july"):
-            current_date = parse_july_date(cells[0])
-            continue
-
-        if current_date is None:
-            continue
-
-        label = cells[0].rstrip(":")
-        morning_name = cells[1] if len(cells) > 1 else ""
-        evening_name = cells[2] if len(cells) > 2 else ""
-
-        if not label:
-            continue
-
-        # Morning assignment
-        if morning_name:
-            _create_assignment(
-                date=current_date,
-                service_type="SUNDAY MORNING",
-                role_label=label,
-                person_name=morning_name,
-            )
-
-        # Evening assignment
-        if evening_name:
-            _create_assignment(
-                date=current_date,
-                service_type="SUNDAY EVENING",
-                role_label=label,
-                person_name=evening_name,
-            )
-
-
-def parse_wednesday_pdf(path: str) -> None:
-    """
-    Expects a table like '7b. July 2026 Wednesday.pdf':
-    - First row: Assignment | July 1st | July 8th
-    - First column: Bible Class, Song Leader, Opening Prayer, Invitation, Closing Prayer
-    """
-    with pdfplumber.open(path) as pdf:
-        for page in pdf.pages:
-            tables = page.extract_tables()
-            for table in tables:
-                _parse_wednesday_table(table)
-
-
-def _parse_wednesday_table(table: list[list[str]]) -> None:
-    if not table:
+        print("ERROR: Could not determine Sunday/Wednesday from filename.")
         return
 
-    header = [c.strip() if isinstance(c, str) else "" for c in table[0]]
-    # header: ['Assignment', 'July 1st', 'July 8th', ...]
-    date_cols = []
-    for idx, col in enumerate(header):
-        if col.lower().startswith("july"):
-            date_cols.append((idx, parse_date_from_string(col, default_year=2026)))
-
-    # For each subsequent row, first cell is role label, others are names
-    for row in table[1:]:
-        cells = [c.strip() if isinstance(c, str) else "" for c in row]
-        if not any(cells):
-            continue
-
-        label = cells[0].rstrip(":")
-        if not label or label.lower() == "assignment":
-            continue
-
-        for col_idx, date in date_cols:
-            if col_idx >= len(cells):
-                continue
-            name = cells[col_idx]
-            if not name or name.lower().startswith("singing night"):
-                continue
-
-            _create_assignment(
-                date=date,
-                service_type="WEDNESDAY EVENING",
-                role_label=label,
-                person_name=name,
-            )
-
-
-def _create_assignment(date, service_type, role_label, person_name) -> None:
-    role = get_or_create_role(role_label)
-    person = find_directory_entry(person_name)
-    if person is None:
-        # You might want to log this somewhere
+    # Extract month + year from filename
+    match = re.search(r"([A-Za-z]+)\s+(\d{4})", filename)
+    if not match:
+        print("ERROR: Could not extract month/year from filename.")
         return
 
-    Assignment.objects.update_or_create(
-        date=date,
-        service_type=service_type,
-        role=role,
-        defaults={
-            "person": person,
-        },
-    )
+    month_name = match.group(1).capitalize()
+    year = int(match.group(2))
 
+    # -----------------------------
+    # Extract PDF text
+    # -----------------------------
+    with pdfplumber.open(path) as pdf:
+        full_text = "\n".join(page.extract_text() or "" for page in pdf.pages)
+
+    # -----------------------------
+    # Parse Monthly Assignments (Sunday PDF only)
+    # -----------------------------
+    if is_sunday:
+        monthly_section = re.search(
+            r"MONTHLY ASSIGNMENTS(.*?)# WEEKLY ASSIGNMENTS",
+            full_text,
+            re.DOTALL | re.IGNORECASE
+        )
+
+        if monthly_section:
+            lines = monthly_section.group(1).split("\n")
+            for line in lines:
+                if ":" not in line:
+                    continue
+
+                role_name, person_name = line.split(":", 1)
+                role = find_role(role_name)
+                person = find_person(person_name)
+
+                if role and person:
+                    Assignment.objects.update_or_create(
+                        date=datetime.strptime(f"{month_name} 1 {year}", "%B %d %Y").date(),
+                        service_type="MONTHLY",
+                        role=role,
+                        defaults={"person": person},
+                    )
+                    print("MONTHLY:", role_name, "→", person_name)
+
+    # -----------------------------
+    # Parse Weekly Assignments
+    # -----------------------------
+    # Find all date headers like "June 7th"
+    date_headers = re.findall(r"([A-Za-z]+\s+\d+(?:st|nd|rd|th))", full_text)
+
+    for header in date_headers:
+        date_obj = parse_date_from_header(header, year)
+        if not date_obj:
+            continue
+
+        # Extract the block of text for this date
+        pattern = header + r"(.*?)(?:June|\Z)"
+        block_match = re.search(pattern, full_text, re.DOTALL | re.IGNORECASE)
+
+        if not block_match:
+            continue
+
+        block = block_match.group(1)
+
+        # Determine service types
+        if is_sunday:
+            services = {
+                "morning": "SUNDAY MORNING",
+                "evening": "SUNDAY EVENING",
+            }
+        else:
+            services = {
+                "evening": "WEDNESDAY EVENING",
+            }
+
+        # Parse role → person pairs
+        pairs = re.findall(r"([A-Za-z ]+):\s*([A-Za-z ]+)", block)
+
+        for role_name, person_name in pairs:
+            role = find_role(role_name)
+            person = find_person(person_name)
+
+            if not role or not person:
+                continue
+
+            # Determine service type
+            if is_sunday:
+                # Sunday PDFs alternate Morning/Evening in order
+                # We detect based on the order in the table
+                # First half = morning, second half = evening
+                # But simplest: check the block text
+                if "Sunday Morning" in block:
+                    service_type = "SUNDAY MORNING"
+                elif "Sunday Evening" in block:
+                    service_type = "SUNDAY EVENING"
+                else:
+                    # fallback: morning first
+                    service_type = "SUNDAY MORNING"
+            else:
+                service_type = "WEDNESDAY EVENING"
+
+            Assignment.objects.update_or_create(
+                date=date_obj,
+                service_type=service_type,
+                role=role,
+                defaults={"person": person},
+            )
+
+            print(f"{date_obj} | {service_type} | {role_name} → {person_name}")
