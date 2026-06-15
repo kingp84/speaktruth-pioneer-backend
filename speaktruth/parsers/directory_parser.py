@@ -18,13 +18,16 @@ def parse_directory_excel(path: str) -> None:
             continue
 
         address = str(row.get("ADDRESS", "")).strip()
-        home_phone = str(row.get("HOME PHONE", "")).strip()
-        cell_phone = str(row.get("CELL PHONE", "")).strip()
+        phone = str(row.get("PHONE", "")).strip()
         active = str(row.get("ACTIVE", "")).strip().lower()
 
         status = "ACTIVE" if active == "yes" else "INACTIVE"
 
-        phone = cell_phone or home_phone
+        email = str(row.get(key: "EMAIL", default: "")).strip()
+
+        notes = str(row.get(key: "NOTES", default: "")).strip()
+
+        role = str(row.get(key:"ROLE", default: "")).strip()
 
         entry, _ = DirectoryEntry.objects.update_or_create(
             first_name__iexact=first_name,
@@ -34,6 +37,7 @@ def parse_directory_excel(path: str) -> None:
                 "last_name": last_name,
                 "address": address,
                 "phone": phone,
+                "email": email,
                 "status": status,
                 "notes": notes,
                 "role": role,
