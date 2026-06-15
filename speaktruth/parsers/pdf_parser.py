@@ -10,6 +10,7 @@ from speaktruth.parsers.normalize import (
 
 
 def parse_assignment_pdfs(path: str) -> None:
+    print("PDF PARSER STARTED:", path)
     filename = os.path.basename(path).lower()
     if "sunday" in filename:
         parse_sunday_pdf(path)
@@ -144,3 +145,4 @@ def _create_assignment(date, service_type, role_label, person_name) -> None:
             "person": person,
         },
     )
+

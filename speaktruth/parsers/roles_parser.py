@@ -5,6 +5,7 @@ from speaktruth.parsers.normalize import normalize_role_name
 
 
 def parse_roles_excel(path: str) -> None:
+    print("ROLES PARSER STARTED:", path)
     df = pd.read_excel(path, sheet_name=0)
 
     df.columns = [str(c).strip().upper() for c in df.columns]
@@ -32,3 +33,5 @@ def parse_roles_excel(path: str) -> None:
                 "gender_restriction": gender_restriction,
             },
         )
+
+

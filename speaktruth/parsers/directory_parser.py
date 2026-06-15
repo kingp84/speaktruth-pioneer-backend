@@ -4,6 +4,7 @@ from directory.models import DirectoryEntry
 
 
 def parse_directory_excel(path: str) -> None:
+    print("DIRECTORY PARSER STARTED:", path)
     df = pd.read_excel(path)
 
     # Expect columns like: LAST NAME, FIRST NAME, ADDRESS, Home Phone, Cell Phone, ATTENDING, Active, GENDER, Role
@@ -36,3 +37,4 @@ def parse_directory_excel(path: str) -> None:
                 "status": status,
             },
         )
+
