@@ -1,6 +1,7 @@
 import pandas as pd
 from directory.models import DirectoryEntry
 
+
 def parse_directory_excel(path: str) -> None:
     print("DIRECTORY PARSER STARTED:", path)
 
@@ -20,17 +21,19 @@ def parse_directory_excel(path: str) -> None:
         address = str(row.get("ADDRESS", "")).strip()
         phone = str(row.get("PHONE", "")).strip()
         email = str(row.get("EMAIL", "")).strip()
-        status = str(row.get("STATUS", "")).strip()
         notes = str(row.get("NOTES", "")).strip()
-        role = str(row.get("ROLE", "")).strip()
+        raw_roles = str(row.get("ROLE", "")).strip()
 
-        # Try to find an existing entry (case-insensitive)
+        # Convert STATUS column ("Yes" / "Inactive") into ACTIVE/INACTIVE
+        status_raw = str(row.get("STATUS", "")).strip().lower()
+        status = "ACTIVE" if status_raw == "yes" else "INACTIVE"
+
+        # Try to find an existing entry
         entry = DirectoryEntry.objects.filter(
             first_name__iexact=first_name,
             last_name__iexact=last_name
         ).first()
 
-        # If not found, create new
         if entry is None:
             entry = DirectoryEntry(
                 first_name=first_name,
@@ -46,7 +49,7 @@ def parse_directory_excel(path: str) -> None:
         entry.email = email
         entry.status = status
         entry.notes = notes
-        entry.role = role
+        entry.raw_roles = raw_roles
 
         entry.save()
 

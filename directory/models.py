@@ -16,7 +16,6 @@ class ServiceNotes(models.Model):
 class Role(models.Model):
     name = models.CharField(max_length=100)
 
-    # Who is allowed to perform this role
     gender_restriction = models.CharField(
         max_length=10,
         choices=[
@@ -27,14 +26,10 @@ class Role(models.Model):
         default="MEN",
     )
 
-    # Permanent assignments (Steve, Gwen)
     permanently_assigned_to = models.CharField(
         max_length=100,
         blank=True,
-        help_text=(
-            "If this role is always done by one person "
-            "(e.g., Steve Hickman), enter their name here."
-        ),
+        help_text="If this role is always done by one person (e.g., Steve Hickman), enter their name here.",
     )
 
     def __str__(self):
@@ -58,10 +53,13 @@ class DirectoryEntry(models.Model):
     ]
     status = models.CharField(max_length=10, choices=MEMBER_STATUS, default="ACTIVE")
 
-    # Roles they are willing to do
-    roles = models.ManyToManyField(Role, blank=True)
+    # Raw roles from Excel (comma-separated)
+    raw_roles = models.TextField(blank=True)
 
-    # Notes (for special instructions)
+    # Parsed roles (optional)
+    assigned_roles = models.ManyToManyField(Role, blank=True)
+
+    # Notes
     notes = models.TextField(blank=True)
 
     def __str__(self):
