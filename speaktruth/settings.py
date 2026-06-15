@@ -23,7 +23,7 @@ CSRF_TRUSTED_ORIGINS = [
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "https://speaktruth.onrender.com",
+    "speaktruth.onrender.com",
 ]
 
 CSRF_COOKIE_SECURE = True
