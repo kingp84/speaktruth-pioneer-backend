@@ -27,7 +27,7 @@ class Assignment(models.Model):
 
     @property
     def is_sunday(self):
-        return self.service_type in ["SUNDAY MORNIGN", "SUNDAY EVENING"]
+        return self.service_type in ["SUNDAY MORNING", "SUNDAY EVENING"]
 
     @property
     def is_wednesday(self):
