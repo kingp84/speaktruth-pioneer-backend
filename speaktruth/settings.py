@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "members",
     "directory",
     "dashboard",
+    "ingestion",
 ]
 
 MIDDLEWARE = [
