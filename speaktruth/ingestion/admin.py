@@ -1,9 +1,8 @@
 from django.contrib import admin
 from .models import AssignmentUpload, DirectoryUpload, RolesUpload
-from parsers.pdf_parser import parse_assignment_pdfs
-from parsers.directory_parser import parse_directory_excel
-from parsers.roles_parser import parse_roles_excel
-
+from speaktruth.parsers.pdf_parser import parse_assignment_pdfs
+from speaktruth.parsers.directory_parser import parse_directory_excel
+from speaktruth.parsers.roles_parser import parse_roles_excel
 
 @admin.action(description="Process selected assignment PDFs")
 def process_assignments(modeladmin, request, queryset):

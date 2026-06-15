@@ -1,7 +1,7 @@
 import pandas as pd
 
 from directory.models import Role
-from parsers.normalize import normalize_role_name
+from speaktruth.parsers.normalize import normalize_role_name
 
 
 def parse_roles_excel(path: str) -> None:

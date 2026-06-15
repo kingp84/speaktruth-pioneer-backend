@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     "members",
     "directory",
     "dashboard",
-    "ingestion",
+    "speaktruth.ingestion",
 ]
 
 MIDDLEWARE = [

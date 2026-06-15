@@ -2,7 +2,7 @@ import os
 import pdfplumber
 
 from assignments.models import Assignment
-from parsers.normalize import (
+from speaktruth.parsers.normalize import (
     get_or_create_role,
     find_directory_entry,
     parse_date_from_string,
