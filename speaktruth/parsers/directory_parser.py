@@ -9,6 +9,7 @@ def parse_directory_excel(path: str) -> None:
 
     # Expect columns like: LAST NAME, FIRST NAME, ADDRESS, Home Phone, Cell Phone, ATTENDING, Active, GENDER, Role
     df.columns = [str(c).strip().upper() for c in df.columns]
+    print("DIRECTORY COLUMNS:", df.columns)
 
     for _, row in df.iterrows():
         last_name = str(row.get("LAST NAME", "")).strip()
@@ -19,7 +20,6 @@ def parse_directory_excel(path: str) -> None:
         address = str(row.get("ADDRESS", "")).strip()
         home_phone = str(row.get("HOME PHONE", "")).strip()
         cell_phone = str(row.get("CELL PHONE", "")).strip()
-        attending = str(row.get("ATTENDING", "")).strip().lower()
         active = str(row.get("ACTIVE", "")).strip().lower()
 
         status = "ACTIVE" if active == "yes" else "INACTIVE"
@@ -35,6 +35,8 @@ def parse_directory_excel(path: str) -> None:
                 "address": address,
                 "phone": phone,
                 "status": status,
+                "notes": notes,
+                "role": role,
             },
         )
 
