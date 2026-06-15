@@ -17,6 +17,7 @@ def process_directory(modeladmin, request, queryset):
         parse_directory_excel(upload.file.path)
         upload.processed = True
         upload.save()
+    print("DIRECTORY ACTION FIRED:", upload.file.path)
 
 @admin.action(description="Process selected roles files")
 def process_roles(modeladmin, request, queryset):
