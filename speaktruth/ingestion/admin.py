@@ -13,8 +13,8 @@ def process_assignments(modeladmin, request, queryset):
 
 @admin.action(description="Process selected directory files")
 def process_directory(modeladmin, request, queryset):
-    print("DIRECTORY ACTION FIRED:", upload.file.path)
     for upload in queryset:
+        print("DIRECTORY ACTION FIRED:", upload.file.path)
         parse_directory_excel(upload.file.path)
         upload.processed = True
         upload.save()
