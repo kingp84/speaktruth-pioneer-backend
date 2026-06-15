@@ -12,8 +12,8 @@ def process_assignments(modeladmin, request, queryset):
         upload.save()
 
 @admin.action(description="Process selected directory files")
-print("DIRECTORY ACTION FIRED:", upload.file.path)
 def process_directory(modeladmin, request, queryset):
+    print("DIRECTORY ACTION FIRED:", upload.file.path)
     for upload in queryset:
         parse_directory_excel(upload.file.path)
         upload.processed = True
