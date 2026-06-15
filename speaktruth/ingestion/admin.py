@@ -11,14 +11,12 @@ def process_assignments(modeladmin, request, queryset):
         upload.processed = True
         upload.save()
 
-
 @admin.action(description="Process selected directory files")
 def process_directory(modeladmin, request, queryset):
     for upload in queryset:
         parse_directory_excel(upload.file.path)
         upload.processed = True
         upload.save()
-
 
 @admin.action(description="Process selected roles files")
 def process_roles(modeladmin, request, queryset):
@@ -27,18 +25,15 @@ def process_roles(modeladmin, request, queryset):
         upload.processed = True
         upload.save()
 
-
 @admin.register(AssignmentUpload)
 class AssignmentUploadAdmin(admin.ModelAdmin):
     list_display = ("file", "uploaded_at", "processed")
     actions = [process_assignments]
 
-
 @admin.register(DirectoryUpload)
 class DirectoryUploadAdmin(admin.ModelAdmin):
     list_display = ("file", "uploaded_at", "processed")
     actions = [process_directory]
-
 
 @admin.register(RolesUpload)
 class RolesUploadAdmin(admin.ModelAdmin):
