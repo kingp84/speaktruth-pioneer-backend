@@ -5,37 +5,12 @@ from directory.models import DirectoryEntry, Role
 from assignments.models import Assignment
 
 
-# -----------------------------
-# Helpers
-# -----------------------------
-
-def parse_date_from_header(text, year):
-    """
-    Extracts dates like 'June 7th' and returns a Python date.
-    """
-    match = re.search(r"([A-Za-z]+)\s+(\d+)(?:st|nd|rd|th)", text)
-    if not match:
-        return None
-
-    month_name = match.group(1)
-    day = int(match.group(2))
-
-    try:
-        return datetime.strptime(f"{month_name} {day} {year}", "%B %d %Y").date()
-    except:
-        return None
-
-
 def find_person(name):
-    """
-    Match a person in DirectoryEntry by first + last name.
-    """
-    parts = name.strip().split()
+    name = name.strip()
+    parts = name.split()
     if len(parts) < 2:
         return None
-
     first, last = parts[0], parts[-1]
-
     return DirectoryEntry.objects.filter(
         first_name__iexact=first,
         last_name__iexact=last
@@ -43,40 +18,24 @@ def find_person(name):
 
 
 def find_role(role_name):
-    """
-    Match a Role object by exact name.
-    """
     return Role.objects.filter(name__iexact=role_name.strip()).first()
 
 
-# -----------------------------
-# MAIN PARSER
-# -----------------------------
+def parse_date(text, year):
+    match = re.search(r"([A-Za-z]+)\s+(\d+)(?:st|nd|rd|th)", text)
+    if not match:
+        return None
+    month = match.group(1)
+    day = int(match.group(2))
+    return datetime.strptime(f"{month} {day} {year}", "%B %d %Y").date()
+
 
 def parse_assignment_pdfs(path):
     print("ASSIGNMENT PARSER STARTED:", path)
 
-    # Determine if this is Sunday or Wednesday
     filename = path.lower()
-
-    if "sunday" in filename:
-        service_type_map = {
-            "morning": "SUNDAY MORNING",
-            "evening": "SUNDAY EVENING",
-        }
-        is_sunday = True
-        is_wednesday = False
-
-    elif "wednesday" in filename:
-        service_type_map = {
-            "evening": "WEDNESDAY EVENING",
-        }
-        is_sunday = False
-        is_wednesday = True
-
-    else:
-        print("ERROR: Could not determine Sunday/Wednesday from filename.")
-        return
+    is_sunday = "sunday" in filename
+    is_wednesday = "wednesday" in filename
 
     # Extract month + year from filename
     match = re.search(r"([A-Za-z]+)\s+(\d{4})", filename)
@@ -87,32 +46,21 @@ def parse_assignment_pdfs(path):
     month_name = match.group(1).capitalize()
     year = int(match.group(2))
 
-    # -----------------------------
-    # Extract PDF text
-    # -----------------------------
+    # Extract text
     with pdfplumber.open(path) as pdf:
-        full_text = "\n".join(page.extract_text() or "" for page in pdf.pages)
+        text = "\n".join(page.extract_text() or "" for page in pdf.pages)
+
+    lines = [line.strip() for line in text.split("\n") if line.strip()]
 
     # -----------------------------
-    # Parse Monthly Assignments (Sunday PDF only)
+    # MONTHLY ASSIGNMENTS (Sunday PDF only)
     # -----------------------------
     if is_sunday:
-        monthly_section = re.search(
-            r"MONTHLY ASSIGNMENTS(.*?)# WEEKLY ASSIGNMENTS",
-            full_text,
-            re.DOTALL | re.IGNORECASE
-        )
-
-        if monthly_section:
-            lines = monthly_section.group(1).split("\n")
-            for line in lines:
-                if ":" not in line:
-                    continue
-
+        for line in lines:
+            if ":" in line and "June" not in line and "Sunday" not in line:
                 role_name, person_name = line.split(":", 1)
                 role = find_role(role_name)
                 person = find_person(person_name)
-
                 if role and person:
                     Assignment.objects.update_or_create(
                         date=datetime.strptime(f"{month_name} 1 {year}", "%B %d %Y").date(),
@@ -123,67 +71,95 @@ def parse_assignment_pdfs(path):
                     print("MONTHLY:", role_name, "→", person_name)
 
     # -----------------------------
-    # Parse Weekly Assignments
+    # WEEKLY ASSIGNMENTS
     # -----------------------------
-    # Find all date headers like "June 7th"
-    date_headers = re.findall(r"([A-Za-z]+\s+\d+(?:st|nd|rd|th))", full_text)
+    i = 0
+    while i < len(lines):
+        line = lines[i]
 
-    for header in date_headers:
-        date_obj = parse_date_from_header(header, year)
-        if not date_obj:
-            continue
-
-        # Extract the block of text for this date
-        pattern = header + r"(.*?)(?:June|\Z)"
-        block_match = re.search(pattern, full_text, re.DOTALL | re.IGNORECASE)
-
-        if not block_match:
-            continue
-
-        block = block_match.group(1)
-
-        # Determine service types
-        if is_sunday:
-            services = {
-                "morning": "SUNDAY MORNING",
-                "evening": "SUNDAY EVENING",
-            }
-        else:
-            services = {
-                "evening": "WEDNESDAY EVENING",
-            }
-
-        # Parse role → person pairs
-        pairs = re.findall(r"([A-Za-z ]+):\s*([A-Za-z ]+)", block)
-
-        for role_name, person_name in pairs:
-            role = find_role(role_name)
-            person = find_person(person_name)
-
-            if not role or not person:
+        # Detect date header
+        if re.search(r"[A-Za-z]+\s+\d+(?:st|nd|rd|th)", line):
+            date_obj = parse_date(line, year)
+            if not date_obj:
+                i += 1
                 continue
 
-            # Determine service type
             if is_sunday:
-                # Sunday PDFs alternate Morning/Evening in order
-                # We detect based on the order in the table
-                # First half = morning, second half = evening
-                # But simplest: check the block text
-                if "Sunday Morning" in block:
-                    service_type = "SUNDAY MORNING"
-                elif "Sunday Evening" in block:
-                    service_type = "SUNDAY EVENING"
-                else:
-                    # fallback: morning first
-                    service_type = "SUNDAY MORNING"
-            else:
-                service_type = "WEDNESDAY EVENING"
+                # Expect: "June 7th Sunday Morning Sunday Evening"
+                if "Sunday Morning" not in line or "Sunday Evening" not in line:
+                    i += 1
+                    continue
 
-            Assignment.objects.update_or_create(
-                date=date_obj,
-                service_type=service_type,
-                role=role,
-                defaults={"person": person},
-            )
+                # Next 5 rows are role rows
+                for j in range(1, 6):
+                    if i + j >= len(lines):
+                        break
 
-            print(f"{date_obj} | {service_type} | {role_name} → {person_name}")
+                    row = lines[i + j]
+                    if ":" not in row:
+                        continue
+
+                    role_name, rest = row.split(":", 1)
+                    parts = rest.strip().split()
+
+                    if len(parts) < 2:
+                        continue
+
+                    morning_name = " ".join(parts[0:2])
+                    evening_name = " ".join(parts[2:4]) if len(parts) >= 4 else None
+
+                    role = find_role(role_name)
+                    morning_person = find_person(morning_name)
+                    evening_person = find_person(evening_name) if evening_name else None
+
+                    if role and morning_person:
+                        Assignment.objects.update_or_create(
+                            date=date_obj,
+                            service_type="SUNDAY MORNING",
+                            role=role,
+                            defaults={"person": morning_person},
+                        )
+                        print(date_obj, "| SUNDAY MORNING |", role_name, "→", morning_name)
+
+                    if role and evening_person:
+                        Assignment.objects.update_or_create(
+                            date=date_obj,
+                            service_type="SUNDAY EVENING",
+                            role=role,
+                            defaults={"person": evening_person},
+                        )
+                        print(date_obj, "| SUNDAY EVENING |", role_name, "→", evening_name)
+
+                i += 6
+                continue
+
+            # -----------------------------
+            # WEDNESDAY
+            # -----------------------------
+            if is_wednesday:
+                # Next 5 rows are role rows
+                for j in range(1, 6):
+                    if i + j >= len(lines):
+                        break
+
+                    row = lines[i + j]
+                    if ":" not in row:
+                        continue
+
+                    role_name, person_name = row.split(":", 1)
+                    role = find_role(role_name)
+                    person = find_person(person_name)
+
+                    if role and person:
+                        Assignment.objects.update_or_create(
+                            date=date_obj,
+                            service_type="WEDNESDAY EVENING",
+                            role=role,
+                            defaults={"person": person},
+                        )
+                        print(date_obj, "| WEDNESDAY EVENING |", role_name, "→", person_name)
+
+                i += 6
+                continue
+
+        i += 1
