@@ -1,10 +1,9 @@
-import pdfplumber
 import re
 from datetime import datetime
 from directory.models import DirectoryEntry, Role
 from assignments.models import Assignment
 
-print("### USING NEW PARSER ###")
+print("### USING NEW TXT PARSER ###")
 
 # -----------------------------
 # HELPERS
@@ -40,44 +39,44 @@ def parse_date(text, year):
 # MAIN PARSER
 # -----------------------------
 
-def parse_assignment_pdfs(path):
-    print("ASSIGNMENT PARSER STARTED:", path)
+def parse_assignment_txt(path):
+    print("TXT ASSIGNMENT PARSER STARTED:", path)
 
     filename = path.lower()
     is_sunday = "sunday" in filename
     is_wednesday = "wednesday" in filename
 
-    # Extract month + year from filename
-    match = re.search(r"([A-Za-z]+)[ _-]*(\d{4})", filename)
-    if not match:
-        print("ERROR: Could not extract month/year from filename:", filename)
+    # Read text file
+    with open(path, "r") as f:
+        lines = [line.strip() for line in f if line.strip()]
+
+    # Extract month + year from header line
+    month_line = None
+    for line in lines:
+        if re.search(r"[A-Za-z]+\s+\d{4}", line):
+            month_line = line
+            break
+
+    if not month_line:
+        print("ERROR: Could not find month/year in file.")
         return
 
-    month_name = match.group(1).capitalize()
-    year = int(match.group(2))
-
-    # Extract text
-    with pdfplumber.open(path) as pdf:
-        text = "\n".join(page.extract_text() or "" for page in pdf.pages)
-
-    lines = [line.strip() for line in text.split("\n") if line.strip()]
+    month_name, year = month_line.split()
+    year = int(year)
 
     # -----------------------------
-    # MONTHLY ASSIGNMENTS (Sunday PDF only)
+    # SUNDAY MONTHLY ASSIGNMENTS
     # -----------------------------
     if is_sunday:
         monthly_section = False
         for line in lines:
 
-            # Start monthly section
             if "MONTHLY ASSIGNMENTS" in line.upper():
                 monthly_section = True
                 continue
 
-            # Once we're in the monthly section, process only "Role: Person" lines
             if monthly_section:
                 if ":" not in line:
-                    # stop if we hit a non-role line (in case future PDFs add footer text)
                     monthly_section = False
                     continue
 
@@ -95,14 +94,13 @@ def parse_assignment_pdfs(path):
                     print("MONTHLY:", role_name, "→", person_name)
 
     # -----------------------------
-    # SUNDAY ASSIGNMENTS
+    # SUNDAY WEEKLY ASSIGNMENTS
     # -----------------------------
     if is_sunday:
         i = 0
         while i < len(lines):
             line = lines[i]
 
-            # Detect Sunday header
             if "Sunday Morning" in line and "Sunday Evening" in line:
                 date_obj = parse_date(line, year)
                 if not date_obj:
@@ -113,6 +111,7 @@ def parse_assignment_pdfs(path):
                 for j in range(1, 6):
                     if i + j >= len(lines):
                         break
+
                     row = lines[i + j]
                     if ":" not in row:
                         continue
@@ -161,13 +160,12 @@ def parse_assignment_pdfs(path):
         while i < len(lines):
             line = lines[i]
 
-            # Detect Wednesday table header
-            if line.startswith("Assignment"):
+            # Detect Wednesday table header (two dates)
+            if re.search(r"\d+(?:st|nd|rd|th)\s+[A-Za-z]+\s+\d+(?:st|nd|rd|th)", line):
                 parts = line.split()
 
-                # Extract dates
-                date1 = parse_date(" ".join(parts[1:3]), year)
-                date2 = parse_date(" ".join(parts[3:5]), year) if len(parts) >= 5 else None
+                date1 = parse_date(" ".join(parts[0:2]), year)
+                date2 = parse_date(" ".join(parts[2:4]), year) if len(parts) >= 4 else None
 
                 print("WEDNESDAY TABLE:", date1, date2)
 
