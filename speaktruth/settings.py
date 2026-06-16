@@ -18,12 +18,14 @@ DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 CSRF_TRUSTED_ORIGINS = [
     "https://speaktruth.onrender.com",
+    "https://pioneer-and-bell-speaktruth.github.io"
 ]
 
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "speaktruth.onrender.com",
+    "https://pioneer-and-bell-speaktruth.github.io"
 ]
 
 CSRF_COOKIE_SECURE = True
