@@ -39,9 +39,9 @@ def parse_assignment_pdfs(path):
     is_wednesday = "wednesday" in filename
 
     # Extract month + year from filename
-    match = re.search(r"([A-Za-z]+)\s+(\d{4})", filename)
+    match = re.search(r"([A-Za-z]+)[ _]+(\d{4})", filename)
     if not match:
-        print("ERROR: Could not extract month/year from filename.")
+        print("ERROR: Could not extract month/year from filename:", filename)
         return
 
     month_name = match.group(1).capitalize()
