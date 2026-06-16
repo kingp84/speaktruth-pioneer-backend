@@ -4,7 +4,7 @@ from directory.models import DirectoryEntry, Role
 
 class Assignment(models.Model):
     SERVICE_TYPES = [
-        ('MONTHLY', 'MONTHLY ASSIGNMENTS'),
+        ('MONTHLY', 'MONTHLY'),
         ('SUNDAY MORNING', 'SUNDAY MORNING'),
         ('SUNDAY EVENING', 'SUNDAY EVENING'),
         ('WEDNESDAY EVENING', 'WEDNESDAY EVENING'),
