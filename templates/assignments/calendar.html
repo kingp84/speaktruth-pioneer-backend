@@ -54,17 +54,16 @@
                         {% if day == 0 %}
                             <td></td>
                         {% else %}
-                            {% with day_date=day|date:"Y-m-d" %}
-                            <td class="
-                                {% if day_date in assignment_dates %}table-warning fw-bold{% endif %}
-                                {% if today.day == day and today.month == month and today.year == year %}border border-info{% endif %}
-                            ">
-                                <a href="{% url 'daily_assignments' year=year month=month day=day %}"
-                                   class="text-decoration-none {% if day_date in assignment_dates %}text-dark{% else %}text-primary{% endif %}">
-                                    {{ day }}
-                                </a>
-                            </td>
-                            {% endwith %}
+                        {% with day_date=year|stringformat:"d"|add:"-"|add:month|stringformat:"02d"|add:"-"|add:day|stringformat:"02d" %}
+                    <td class="
+                            {% if day_date in assignment_dates %}table-warning fw-bold{% endif %}
+                            {% if today.day == day and today.month == month and today.year == year %}border border-info{% endif %}">
+                        <a href="{% url 'daily_assignments' year=year month=month day=day %}"
+                        class="text-decoration-none {% if day_date in assignment_dates %}text-dark{% else %}text-primary{% endif %}">
+                        {{ day }}
+                        </a>
+                    </td>
+                    {% endwith %}
                         {% endif %}
                     {% endfor %}
                 </tr>

@@ -35,14 +35,17 @@ def monthly_assignments(request, year, month):
     for a in assignments:
         dt = a.date
 
-        # Sunday assignments
-        if a.service_type in ["SUNDAY EVENING", "SUNDAY EVENING"]:
-            sundays.setdefault(dt, {"SUNDAY MORNING": [], "SUNDAY EVENING": [], "notes": []})
+        # -------------------------
+        # SUNDAY ASSIGNMENTS
+        # -------------------------
+        if a.service_type in ["SUNDAY MORNING", "SUNDAY EVENING"]:
+            sundays.setdefault(dt, {
+                "SUNDAY MORNING": [],
+                "SUNDAY EVENING": [],
+                "notes": []
+            })
 
-            if a.service_type == "SUNDAY MORNING":
-                sundays[dt]["SUNDAY MORNING"].append(a)
-            else:
-                sundays[dt]["SUNDAY EVENING"].append(a)
+            sundays[dt][a.service_type].append(a)
 
             # 5th Sunday logic
             if is_fifth_sunday(dt):
@@ -52,11 +55,17 @@ def monthly_assignments(request, year, month):
                 )
                 if note not in sundays[dt]["notes"]:
                     sundays[dt]["notes"].append(note)
-                sundays[dt]["SUNDAY EVENING"] = []  # No PM service on 5th Sunday
+                sundays[dt]["SUNDAY EVENING"] = []  # No PM service
 
-        # Wednesday assignments
-        elif a.service_type == "WEDNESDAY EVENING":
-            wednesdays.setdefault(dt, {"WEDNESDAY": [], "items": [], "notes": []})
+        # -------------------------
+        # WEDNESDAY ASSIGNMENTS
+        # -------------------------
+        if a.service_type == "WEDNESDAY EVENING":
+            wednesdays.setdefault(dt, {
+                "items": [],
+                "notes": []
+            })
+
             wednesdays[dt]["items"].append(a)
 
             if is_second_wednesday(dt):
@@ -80,7 +89,6 @@ def monthly_assignments(request, year, month):
 
     return render(request, "assignments/monthly_assignments.html", context)
 
-
 # ---------------------------------------------------------
 # MONTHLY ASSIGNMENTS PDF
 # ---------------------------------------------------------
@@ -103,14 +111,19 @@ def monthly_assignments_pdf(request, year, month):
     for a in assignments:
         dt = a.date
 
+        # -------------------------
+        # SUNDAY ASSIGNMENTS
+        # -------------------------
         if a.service_type in ["SUNDAY MORNING", "SUNDAY EVENING"]:
-            sundays.setdefault(dt, {"SUNDAY MORNING": [], "SUNDAY EVENING": [], "notes": []})
+            sundays.setdefault(dt, {
+                "SUNDAY MORNING": [],
+                "SUNDAY EVENING": [],
+                "notes": []
+            })
 
-            if a.service_type == "SUNDAY MORNING":
-                sundays[dt]["SUNDAY MORNING"].append(a)
-            else:
-                sundays[dt]["SUNDAY EVENING"].append(a)
+            sundays[dt][a.service_type].append(a)
 
+            # 5th Sunday logic
             if is_fifth_sunday(dt):
                 note = (
                     "Fellowship Meal at noon. Afternoon service around 2 PM. "
@@ -118,10 +131,17 @@ def monthly_assignments_pdf(request, year, month):
                 )
                 if note not in sundays[dt]["notes"]:
                     sundays[dt]["notes"].append(note)
-                sundays[dt]["SUNDAY EVENING"] = []
+                sundays[dt]["SUNDAY EVENING"] = []  # No PM service
 
-        elif a.service_type == "WEDNESDAY EVENING":
-            wednesdays.setdefault(dt, {"WEDNESDAY": [], "items": [], "notes": []})
+        # -------------------------
+        # WEDNESDAY ASSIGNMENTS
+        # -------------------------
+        if a.service_type == "WEDNESDAY EVENING":
+            wednesdays.setdefault(dt, {
+                "items": [],
+                "notes": []
+            })
+
             wednesdays[dt]["items"].append(a)
 
             if is_second_wednesday(dt):
@@ -220,9 +240,9 @@ def daily_assignments(request, year, month, day):
 
     context = {
         "date": dt,
-        "SUNDAY MORNING": morning,
-        "SUNDAY EVENING": evening,
-        "WEDNESDAY EVENING": wednesday,
+        "sun_am": morning,
+        "sun_pm": evening,
+        "wed_pm": wednesday,
         "notes": notes,
         "today": date.today(),
         "year": year,
