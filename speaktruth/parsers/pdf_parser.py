@@ -4,6 +4,7 @@ from datetime import datetime
 from directory.models import DirectoryEntry, Role
 from assignments.models import Assignment
 
+print("### USING NEW PARSER ###")
 
 def find_person(name):
     name = name.strip()
