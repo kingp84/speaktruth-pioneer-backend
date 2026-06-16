@@ -61,7 +61,7 @@
             {% endif %}
 
             <h5 class="fw-bold mt-2">SUNDAY MORNING</h5>
-            {% for a in services.Morning %}
+            {% for a in services.SUNDAY_MORNING %}
                 <p class="mb-1">
                     <strong>{{ a.role.name }}:</strong>
                     {{ a.person.first_name }} {{ a.person.last_name }}
@@ -74,7 +74,7 @@
             {% endfor %}
 
             <h5 class="fw-bold mt-3">SUNDAY EVENING</h5>
-            {% for a in services.Evening %}
+            {% for a in services.SUNDAY_EVENING %}
                 <p class="mb-1">
                     <strong>{{ a.role.name }}:</strong>
                     {{ a.person.first_name }} {{ a.person.last_name }}
@@ -130,44 +130,6 @@
             <p>• All assignments are subject to change the day of the service due to availability.</p>
         </div>
     </div>
-
-    <!-- PDF VIEW BUTTON -->
-    <div class="text-center my-4">
-        <a class="btn btn-primary btn-lg" href="#" target="_blank">
-            View Monthly PDF
-        </a>
-    </div>
-
-</div>
-
-<!-- PRINT STYLES -->
-<style>
-@media print {
-    body {
-        background: white !important;
-    }
-    .container {
-        box-shadow: none !important;
-        border: none !important;
-    }
-    .card {
-        border: 1px solid #000 !important;
-        box-shadow: none !important;
-    }
-    .card-header {
-        background: #fff !important;
-        color: #000 !important;
-    }
-    .text-primary,
-    .text-secondary,
-    .text-muted {
-        color: #000 !important;
-    }
-    .btn {
-        display: none !important;
-    }
-}
-</style>
 
 <!-- Hidden today variable -->
 <span style="display:none;">{{ today }}</span>
