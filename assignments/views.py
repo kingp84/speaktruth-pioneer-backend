@@ -38,14 +38,16 @@ def monthly_assignments(request, year, month):
         # -------------------------
         # SUNDAY ASSIGNMENTS
         # -------------------------
-        if a.service_type in ["SUNDAY MORNING", "SUNDAY EVENING"]:
+        stype = a.service_type.upper().strip()
+
+        if stype in ["SUNDAY MORNING", "SUNDAY EVENING"]:
             sundays.setdefault(dt, {
                 "SUNDAY MORNING": [],
                 "SUNDAY EVENING": [],
                 "notes": []
             })
 
-            sundays[dt][a.service_type].append(a)
+            sundays[dt][stype].append(a)
 
             # 5th Sunday logic
             if is_fifth_sunday(dt):
