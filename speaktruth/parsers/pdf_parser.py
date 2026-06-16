@@ -68,16 +68,21 @@ def parse_assignment_pdfs(path):
     if is_sunday:
         monthly_section = False
         for line in lines:
+
+            # Start monthly section
             if "MONTHLY ASSIGNMENTS" in line.upper():
                 monthly_section = True
                 continue
-            if "WEEKLY ASSIGNMENTS" in line.upper():
+
+            # End monthly section when first date header appears
+            if re.search(r"[A-Za-z]+\s+\d+(?:st|nd|rd|th)", line):
                 monthly_section = False
-                continue
+
             if monthly_section and ":" in line:
                 role_name, person_name = line.split(":", 1)
                 role = find_role(role_name)
                 person = find_person(person_name)
+
                 if role and person:
                     Assignment.objects.update_or_create(
                         date=datetime.strptime(f"{month_name} 1 {year}", "%B %d %Y").date(),
