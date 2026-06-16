@@ -74,11 +74,13 @@ def parse_assignment_pdfs(path):
                 monthly_section = True
                 continue
 
-            # End monthly section when first date header appears
-            if re.search(r"[A-Za-z]+\s+\d+(?:st|nd|rd|th)", line):
-                monthly_section = False
+            # Once we're in the monthly section, process only "Role: Person" lines
+            if monthly_section:
+                if ":" not in line:
+                    # stop if we hit a non-role line (in case future PDFs add footer text)
+                    monthly_section = False
+                    continue
 
-            if monthly_section and ":" in line:
                 role_name, person_name = line.split(":", 1)
                 role = find_role(role_name)
                 person = find_person(person_name)
