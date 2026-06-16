@@ -160,12 +160,17 @@ def parse_assignment_txt(path):
         while i < len(lines):
             line = lines[i]
 
-            # Detect Wednesday table header (two dates)
-            if re.search(r"\d+(?:st|nd|rd|th)\s+[A-Za-z]+\s+\d+(?:st|nd|rd|th)", line):
+            # Detect table header: starts with "Assignment"
+            if line.startswith("Assignment"):
                 parts = line.split()
 
-                date1 = parse_date(" ".join(parts[0:2]), year)
-                date2 = parse_date(" ".join(parts[2:4]), year) if len(parts) >= 4 else None
+                # Extract dates
+                # Example: ["Assignment", "June", "3rd", "June", "10th"]
+                date1 = parse_date(" ".join(parts[1:3]), year)
+
+                date2 = None
+                if len(parts) >= 5:
+                    date2 = parse_date(" ".join(parts[3:5]), year)
 
                 print("WEDNESDAY TABLE:", date1, date2)
 
@@ -178,16 +183,20 @@ def parse_assignment_txt(path):
                     if ":" not in row:
                         continue
 
+                    # Split role from the two columns
                     role_name, rest = row.split(":", 1)
                     parts = rest.strip().split()
 
+                    # Column 1 person
                     col1 = " ".join(parts[0:2]) if len(parts) >= 2 else None
+                    # Column 2 person (optional)
                     col2 = " ".join(parts[2:4]) if len(parts) >= 4 else None
 
                     role = find_role(role_name)
                     p1 = find_person(col1)
                     p2 = find_person(col2)
 
+                    # Save first date
                     if role and p1 and date1:
                         Assignment.objects.update_or_create(
                             date=date1,
@@ -197,6 +206,7 @@ def parse_assignment_txt(path):
                         )
                         print(date1, "| WEDNESDAY |", role_name, "→", col1)
 
+                    # Save second date (if exists)
                     if role and p2 and date2:
                         Assignment.objects.update_or_create(
                             date=date2,
@@ -210,3 +220,4 @@ def parse_assignment_txt(path):
                 continue
 
             i += 1
+
