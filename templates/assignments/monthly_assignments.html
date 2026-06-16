@@ -5,6 +5,7 @@
     <title>{{ month_name }} {{ year }} Assignments</title>
 
     {% load static %}
+    {% load dict_extras %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 </head>
 
@@ -61,7 +62,7 @@
             {% endif %}
 
             <h5 class="fw-bold mt-2">Sunday Morning</h5>
-            {% for a in services.SUNDAY_MORNING %}
+            {% for a in services|get_item:"SUNDAY MORNING" %}
                 <p class="mb-1">
                     <strong>{{ a.role.name }}:</strong>
                     {{ a.person.first_name }} {{ a.person.last_name }}
@@ -74,7 +75,7 @@
             {% endfor %}
 
             <h5 class="fw-bold mt-3">Sunday Evening</h5>
-            {% for a in services.SUNDAY_EVENING %}
+            {% for a in services|get_item:"SUNDAY EVENING" %}
                 <p class="mb-1">
                     <strong>{{ a.role.name }}:</strong>
                     {{ a.person.first_name }} {{ a.person.last_name }}
