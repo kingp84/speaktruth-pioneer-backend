@@ -128,7 +128,7 @@ def monthly_assignments_pdf(request, year, month):
             # 5th Sunday logic
             if is_fifth_sunday(dt):
                 note = (
-                    "Fellowship Meal at noon. Afternoon service around 2 PM. "
+                    "Fellowship Meal at noon. Afternoon service around 1 PM. "
                     "No regular evening service at 6p."
                 )
                 if note not in sundays[dt]["notes"]:
@@ -235,7 +235,7 @@ def daily_assignments(request, year, month, day):
     notes = []
 
     if is_fifth_sunday(dt):
-        notes.append("Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service.")
+        notes.append("Fellowship Meal at noon. Afternoon service around 1 PM. No regular evening service.")
 
     if is_second_wednesday(dt):
         notes.append("Singing Night — congregational singing service.")
@@ -272,7 +272,7 @@ def daily_assignments_pdf(request, year, month, day):
     notes = []
 
     if is_fifth_sunday(dt):
-        notes.append("Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service.")
+        notes.append("Fellowship Meal at noon. Afternoon service around 1 PM. No regular evening service.")
 
     if is_second_wednesday(dt):
         notes.append("Singing Night — congregational singing service.")

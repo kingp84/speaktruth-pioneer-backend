@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Member Login – Pioneer & Bell</title>
+    <title>Member Login – Pioneer & Bell church of Christ</title>
 
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
 
 <body class="bg-light d-flex justify-content-center align-items-center" style="height: 100vh;">
@@ -30,7 +32,13 @@
 
                 <div class="mb-3">
                     <label class="form-label fw-bold">Password</label>
-                    <input type="password" name="password" class="form-control" required>
+
+                    <div class="input-group">
+                        <input type="password" name="password" class="form-control" id="memberPassword" required>
+                        <span class="input-group-text" id="toggleMemberPassword" style="cursor: pointer;">
+                            <i class="bi bi-eye-slash"></i>
+                        </span>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">Log In</button>
@@ -45,6 +53,24 @@
         </div>
     </div>
 </div>
+
+<!-- Password Toggle Script -->
+<script>
+function setupPasswordToggle(inputId, toggleId) {
+    const input = document.getElementById(inputId);
+    const toggle = document.getElementById(toggleId);
+    const icon = toggle.querySelector("i");
+
+    toggle.addEventListener("click", () => {
+        const isPassword = input.type === "password";
+        input.type = isPassword ? "text" : "password";
+        icon.classList.toggle("bi-eye");
+        icon.classList.toggle("bi-eye-slash");
+    });
+}
+
+setupPasswordToggle("memberPassword", "toggleMemberPassword");
+</script>
 
 </body>
 </html>
