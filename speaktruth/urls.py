@@ -12,6 +12,7 @@ from assignments.views import (
     assignment_calendar_month,
     daily_assignments,
     monthly_assignments_pdf,
+    api_assignments_for_day,
 )
 
 from directory.views import (
