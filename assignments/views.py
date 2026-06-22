@@ -228,7 +228,11 @@ def assignment_calendar_month(request, year, month):
 def daily_assignments(request, year, month, day):
     dt = date(year, month, day)
 
-    assignments = Assignment.objects.filter(date=dt).select_related("person", "role")
+    assignments = Assignment.objects.filter(
+        date__year=dt.year,
+        date__month=dt.month,
+        date__day=dt.day
+    ).select_related("person", "role")
 
     morning = assignments.filter(service_type="SUNDAY MORNING")
     evening = assignments.filter(service_type="SUNDAY EVENING")
