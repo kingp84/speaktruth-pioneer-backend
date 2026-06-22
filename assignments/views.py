@@ -1,27 +1,30 @@
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from django.http import HttpResponse
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from datetime import date
 from assignments.models import Assignment
 from assignments.utils import is_second_wednesday, is_fifth_sunday
 import calendar
 
+
+# ---------------------------------------------------------
+# API: Assignments for a Single Day (Used by SongLeader App)
+# ---------------------------------------------------------
 def api_assignments_for_day(request, year, month, day):
     dt = date(year, month, day)
 
     assignments = Assignment.objects.filter(date=dt).select_related("person", "role")
 
-    data = []
-
-    for a in assignments:
-        data.append({
+    data = [
+        {
             "id": a.id,
             "role": a.role.name,
             "person": a.person.full_name if a.person else None,
             "service_type": a.service_type,
-        })
+        }
+        for a in assignments
+    ]
 
     notes = []
     if is_fifth_sunday(dt):
@@ -34,12 +37,6 @@ def api_assignments_for_day(request, year, month, day):
         "assignments": data,
         "notes": notes,
     })
-# PDF engine
-try:
-    from weasyprint import HTML
-    WEASYPRINT_AVAILABLE = True
-except ImportError:
-    WEASYPRINT_AVAILABLE = False
 
 
 # ---------------------------------------------------------
@@ -60,22 +57,17 @@ def monthly_assignments(request, year, month):
 
     for a in assignments:
         dt = a.date
-
-        # -------------------------
-        # SUNDAY ASSIGNMENTS
-        # -------------------------
         stype = a.service_type.upper().strip()
 
+        # Sunday assignments
         if stype in ["SUNDAY MORNING", "SUNDAY EVENING"]:
             sundays.setdefault(dt, {
                 "SUNDAY MORNING": [],
                 "SUNDAY EVENING": [],
                 "notes": []
             })
-
             sundays[dt][stype].append(a)
 
-            # 5th Sunday logic
             if is_fifth_sunday(dt):
                 note = (
                     "Fellowship Meal at noon. Afternoon service around 1 PM. "
@@ -83,17 +75,11 @@ def monthly_assignments(request, year, month):
                 )
                 if note not in sundays[dt]["notes"]:
                     sundays[dt]["notes"].append(note)
-                sundays[dt]["SUNDAY EVENING"] = []  # No PM service
+                sundays[dt]["SUNDAY EVENING"] = []
 
-        # -------------------------
-        # WEDNESDAY ASSIGNMENTS
-        # -------------------------
+        # Wednesday assignments
         if a.service_type == "WEDNESDAY EVENING":
-            wednesdays.setdefault(dt, {
-                "items": [],
-                "notes": []
-            })
-
+            wednesdays.setdefault(dt, {"items": [], "notes": []})
             wednesdays[dt]["items"].append(a)
 
             if is_second_wednesday(dt):
@@ -117,6 +103,7 @@ def monthly_assignments(request, year, month):
 
     return render(request, "assignments/monthly_assignments.html", context)
 
+
 # ---------------------------------------------------------
 # MONTHLY ASSIGNMENTS PDF
 # ---------------------------------------------------------
@@ -139,19 +126,14 @@ def monthly_assignments_pdf(request, year, month):
     for a in assignments:
         dt = a.date
 
-        # -------------------------
-        # SUNDAY ASSIGNMENTS
-        # -------------------------
         if a.service_type in ["SUNDAY MORNING", "SUNDAY EVENING"]:
             sundays.setdefault(dt, {
                 "SUNDAY MORNING": [],
                 "SUNDAY EVENING": [],
                 "notes": []
             })
-
             sundays[dt][a.service_type].append(a)
 
-            # 5th Sunday logic
             if is_fifth_sunday(dt):
                 note = (
                     "Fellowship Meal at noon. Afternoon service around 1 PM. "
@@ -159,17 +141,10 @@ def monthly_assignments_pdf(request, year, month):
                 )
                 if note not in sundays[dt]["notes"]:
                     sundays[dt]["notes"].append(note)
-                sundays[dt]["SUNDAY EVENING"] = []  # No PM service
+                sundays[dt]["SUNDAY EVENING"] = []
 
-        # -------------------------
-        # WEDNESDAY ASSIGNMENTS
-        # -------------------------
         if a.service_type == "WEDNESDAY EVENING":
-            wednesdays.setdefault(dt, {
-                "items": [],
-                "notes": []
-            })
-
+            wednesdays.setdefault(dt, {"items": [], "notes": []})
             wednesdays[dt]["items"].append(a)
 
             if is_second_wednesday(dt):
@@ -206,6 +181,7 @@ def assignment_calendar(request):
     today = timezone.now().date()
     return redirect("assignment_calendar_month", year=today.year, month=today.month)
 
+
 # ---------------------------------------------------------
 # MONTHLY CALENDAR GRID VIEW
 # ---------------------------------------------------------
@@ -214,7 +190,7 @@ def assignment_calendar_month(request, year, month):
     month_name = month_date.strftime("%B")
     today = timezone.now().date()
 
-    cal = calendar.Calendar(firstweekday=6)  # Sunday start
+    cal = calendar.Calendar(firstweekday=6)
     month_weeks = cal.monthdayscalendar(year, month)
 
     assignments = Assignment.objects.filter(
@@ -222,7 +198,7 @@ def assignment_calendar_month(request, year, month):
         date__month=month
     )
 
-    assignment_dates = set(a.date.strftime("%Y-%m-%d") for a in assignments)
+    assignment_dates = {a.date.strftime("%Y-%m-%d") for a in assignments}
 
     prev_month = 12 if month == 1 else month - 1
     prev_year = year - 1 if month == 1 else year
@@ -259,10 +235,8 @@ def daily_assignments(request, year, month, day):
     wednesday = assignments.filter(service_type="WEDNESDAY EVENING")
 
     notes = []
-
     if is_fifth_sunday(dt):
         notes.append("Fellowship Meal at noon. Afternoon service around 1 PM. No regular evening service.")
-
     if is_second_wednesday(dt):
         notes.append("Singing Night — congregational singing service.")
 
@@ -296,10 +270,8 @@ def daily_assignments_pdf(request, year, month, day):
     wednesday = assignments.filter(service_type="WEDNESDAY EVENING")
 
     notes = []
-
     if is_fifth_sunday(dt):
         notes.append("Fellowship Meal at noon. Afternoon service around 1 PM. No regular evening service.")
-
     if is_second_wednesday(dt):
         notes.append("Singing Night — congregational singing service.")
 
@@ -317,3 +289,13 @@ def daily_assignments_pdf(request, year, month, day):
     response = HttpResponse(pdf_file, content_type="application/pdf")
     response["Content-Disposition"] = f'attachment; filename=\"assignments_{dt.isoformat()}.pdf\"'
     return response
+
+
+# ---------------------------------------------------------
+# WEASYPRINT IMPORT (MUST BE AT THE BOTTOM)
+# ---------------------------------------------------------
+try:
+    from weasyprint import HTML
+    WEASYPRINT_AVAILABLE = True
+except ImportError:
+    WEASYPRINT_AVAILABLE = False
