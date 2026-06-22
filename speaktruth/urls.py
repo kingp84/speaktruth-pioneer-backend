@@ -44,8 +44,8 @@ urlpatterns = [
 
     # Assignment PDFs
     path("assignments/pdf/<int:year>/<int:month>/", monthly_assignments_pdf, name="monthly_assignments_pdf"),
-    path("api/<int:year>/<int:month>/<int:day>/", api_assignments_for_day, name="api_assignments_for_day"),
-    path("members/songleader-app/", songleader_app_info, name="songleader_app_info"),
+    path("api/<int:path("members/songleader-app/", songleader_app_info, name="songleader_app_info")year>/<int:month>/<int:day>/", api_assignments_for_day, name="api_assignments_for_day"),
+    ,
 
     # Directory
     path("directory/", directory_view, name="directory"),
