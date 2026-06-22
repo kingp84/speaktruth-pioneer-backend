@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.template.loader import render_to_string
 from datetime import date
+from assignments.models import Assignment
+from assignments.utils import is_fifth_sunday, is_second_wednesday
 import calendar
 
 from assignments.models import Assignment
@@ -15,6 +18,32 @@ try:
 except ImportError:
     WEASYPRINT_AVAILABLE = False
 
+def api_assignments_for_day(request, year, month, day):
+    dt = date(year, month, day)
+
+    assignments = Assignment.objects.filter(date=dt).select_related("person", "role")
+
+    data = []
+
+    for a in assignments:
+        data.append({
+            "id": a.id,
+            "role": a.role.name,
+            "person": a.person.full_name if a.person else None,
+            "service_type": a.service_type,
+        })
+
+    notes = []
+    if is_fifth_sunday(dt):
+        notes.append("Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service.")
+    if is_second_wednesday(dt):
+        notes.append("Singing Night — congregational singing service.")
+
+    return JsonResponse({
+        "date": dt.isoformat(),
+        "assignments": data,
+        "notes": notes,
+    })
 
 # ---------------------------------------------------------
 # MONTHLY ASSIGNMENTS VIEW
