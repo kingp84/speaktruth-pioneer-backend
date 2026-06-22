@@ -4,10 +4,9 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from datetime import date
-import calendar
-
 from assignments.models import Assignment
 from assignments.utils import is_second_wednesday, is_fifth_sunday
+import calendar
 
 # PDF engine
 try:
