@@ -8,13 +8,6 @@ from assignments.models import Assignment
 from assignments.utils import is_second_wednesday, is_fifth_sunday
 import calendar
 
-# PDF engine
-try:
-    from weasyprint import HTML
-    WEASYPRINT_AVAILABLE = True
-except ImportError:
-    WEASYPRINT_AVAILABLE = False
-
 def api_assignments_for_day(request, year, month, day):
     dt = date(year, month, day)
 
@@ -32,7 +25,7 @@ def api_assignments_for_day(request, year, month, day):
 
     notes = []
     if is_fifth_sunday(dt):
-        notes.append("Fellowship Meal at noon. Afternoon service around 2 PM. No regular evening service.")
+        notes.append("Fellowship Meal at noon. Afternoon service around 1 PM. No regular evening service.")
     if is_second_wednesday(dt):
         notes.append("Singing Night — congregational singing service.")
 
@@ -41,6 +34,13 @@ def api_assignments_for_day(request, year, month, day):
         "assignments": data,
         "notes": notes,
     })
+# PDF engine
+try:
+    from weasyprint import HTML
+    WEASYPRINT_AVAILABLE = True
+except ImportError:
+    WEASYPRINT_AVAILABLE = False
+
 
 # ---------------------------------------------------------
 # MONTHLY ASSIGNMENTS VIEW
