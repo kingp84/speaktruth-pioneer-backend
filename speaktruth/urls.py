@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from django.conf import settings
 from django.conf.urls.static import static
 
-from members.views import login_view, logout_view, member_home
+from members.views import (login_view, logout_view, member_home, songleader_app_info)
 
 from assignments.views import (
     monthly_assignments,
