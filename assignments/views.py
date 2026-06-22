@@ -14,7 +14,7 @@ import calendar
 def api_assignments_for_day(request, year, month, day):
     dt = date(year, month, day)
 
-    assignments = Assignment.objects.filter(date__year=year, date__month=month, date__day=day).select_related("person", "role")
+    assignments = Assignment.objects.filter(date__year=year, date__month=month, date__day=day,service_type="SUNDAY MORNING").select_related("person", "role")
 
     data = [
         {
