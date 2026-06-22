@@ -4,8 +4,6 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from datetime import date
-from assignments.models import Assignment
-from assignments.utils import is_fifth_sunday, is_second_wednesday
 import calendar
 
 from assignments.models import Assignment

@@ -14,3 +14,6 @@ def member_home(request):
     }
 
     return render(request, "dashboard/member_home.html", context)
+
+def songleader_app_info(request):
+    return render(request, "members/songleader_app_info.html")
