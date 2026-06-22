@@ -23,6 +23,8 @@ def logout_view(request):
     logout(request)
     return redirect("login")
 
+def songleader_app_info(request):
+    return render(request, "members/songleader_app_info.html")
 
 @login_required
 def member_home(request):
