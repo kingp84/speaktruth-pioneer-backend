@@ -42,7 +42,13 @@ def api_assignments_for_day(request, year, month, day):
 
     for a in assignments:
         role_key = a.role.name.lower().replace(" ", "_")
-        data["assignments"][role_key] = a.person.full_name if a.person else None
+
+        if a.person:
+            person_name = f"{a.person.first_name} {a.person.last_name}".strip()
+        else:
+            person_name = None
+
+        data["assignments"][role_key] = person_name
 
     if is_fifth_sunday(dt):
         data["notes"].append("Fellowship Meal at noon. Afternoon service around 1 PM. No regular evening service.")
