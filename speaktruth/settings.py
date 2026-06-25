@@ -86,13 +86,11 @@ WSGI_APPLICATION = "speaktruth.wsgi.application"
 import dj_database_url
 
 DATABASES = {
-    "default": dj_database_url.parse(
-        "postgresql://speak_truth_postgres_user:SBPINQ0x5nNYEXw5zLX8SCpibEmLDZQL@dpg-d8o2gnmrnols73b95vg0-a.oregon-postgres.render.com/speak_truth_postgres",
+    "default": dj_database_url.config(
         conn_max_age=600,
         ssl_require=True
     )
 }
-
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
