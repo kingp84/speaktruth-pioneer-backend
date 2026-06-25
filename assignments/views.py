@@ -22,9 +22,9 @@ def api_assignments_for_day(request, year, month, day):
         return response
 
     # API key check (only for real GET requests)
-    api_key = request.headers.get("X-API-Key")
-    if api_key != os.environ.get("SONGLEADER_API_KEY"):
-        return JsonResponse({"error": "Unauthorized"}, status=401)
+    # api_key = request.headers.get("X-API-Key")
+    # if api_key != os.environ.get("SONGLEADER_API_KEY"):
+    #    return JsonResponse({"error": "Unauthorized"}, status=401)
 
     dt = date(year, month, day)
 
