@@ -3,7 +3,7 @@ from django.urls import path
 from django.shortcuts import redirect
 from django.conf import settings
 from django.conf.urls.static import static
-
+from django.views.decorators.csrf import csrf_exempt
 from members.views import (login_view, logout_view, member_home, songleader_app_info)
 
 from assignments.views import (
@@ -44,9 +44,12 @@ urlpatterns = [
 
     # Assignment PDFs
     path("assignments/pdf/<int:year>/<int:month>/", monthly_assignments_pdf, name="monthly_assignments_pdf"),
-    path("assignments/api/<int:year>/<int:month>/<int:day>/",api_assignments_for_day,name="api_assignments_for_day"),
+    path(
+        "assignments/api/<int:year>/<int:month>/<int:day>/",
+        csrf_exempt(api_assignments_for_day),
+        name="api_assignments_for_day"
+    ),
     path("members/songleader-app/", songleader_app_info, name="songleader_app_info"),
-
 
     # Directory
     path("directory/", directory_view, name="directory"),
