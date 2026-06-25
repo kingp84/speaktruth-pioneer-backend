@@ -13,7 +13,15 @@ import os
 # API: Assignments for a Single Day (Used by SongLeader App)
 # ---------------------------------------------------------
 def api_assignments_for_day(request, year, month, day):
-    # API key check
+    # Handle CORS preflight
+    if request.method == "OPTIONS":
+        response = JsonResponse({"detail": "OK"})
+        response["Access-Control-Allow-Origin"] = "https://pioneer-and-bell-speaktruth.github.io"
+        response["Access-Control-Allow-Headers"] = "X-API-Key, Content-Type"
+        response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+        return response
+
+    # API key check (only for real GET requests)
     api_key = request.headers.get("X-API-Key")
     if api_key != os.environ.get("SONGLEADER_API_KEY"):
         return JsonResponse({"error": "Unauthorized"}, status=401)
@@ -26,26 +34,24 @@ def api_assignments_for_day(request, year, month, day):
         date__day=day,
     ).select_related("person", "role")
 
-    # Structured response
     data = {
         "date": dt.isoformat(),
         "assignments": {},
         "notes": []
     }
 
-    # Convert roles into clean keys
     for a in assignments:
         role_key = a.role.name.lower().replace(" ", "_")
         data["assignments"][role_key] = a.person.full_name if a.person else None
 
-    # Add service notes
     if is_fifth_sunday(dt):
         data["notes"].append("Fellowship Meal at noon. Afternoon service around 1 PM. No regular evening service.")
     if is_second_wednesday(dt):
         data["notes"].append("Singing Night — congregational singing service.")
 
-    return JsonResponse(data)
-
+    response = JsonResponse(data)
+    response["Access-Control-Allow-Origin"] = "https://pioneer-and-bell-speaktruth.github.io"
+    return response
 
 # ---------------------------------------------------------
 # MONTHLY ASSIGNMENTS VIEW
