@@ -40,8 +40,24 @@ def api_assignments_for_day(request, year, month, day):
         "notes": []
     }
 
+    ROLE_MAP = {
+        "opening_prayer": "openingprayer",
+        "closing_prayer": "closingprayer",
+        "scriptures": "scriptures",
+        "scripture_reading": "scriptures",
+        "preaching": "preaching",
+        "invitation": "invitation",
+        "bible_class": "classteacher",
+        # song_leader intentionally NOT mapped
+    }
+
     for a in assignments:
-        role_key = a.role.name.lower().replace(" ", "_")
+        raw_key = a.role.name.lower().replace(" ", "_")
+        role_key = ROLE_MAP.get(raw_key)
+
+        # Skip roles you don't want (like song_leader)
+        if not role_key:
+            continue
 
         if a.person:
             person_name = f"{a.person.first_name} {a.person.last_name}".strip()
