@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "directory",
     "dashboard",
     "speaktruth.ingestion",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -60,6 +61,15 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://pioneer-and-bell-speaktruth.github.io",
+]
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "x-api-key",
 ]
 
 ROOT_URLCONF = "speaktruth.urls"
