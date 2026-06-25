@@ -25,7 +25,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "speaktruth.onrender.com",
-    "https://pioneer-and-bell-speaktruth.github.io"
+    "pioneer-and-bell-speaktruth.github.io"
 ]
 
 CSRF_COOKIE_SECURE = True
@@ -50,18 +50,15 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",   # MUST be first
     "django.middleware.security.SecurityMiddleware",
-
-    # Whitenoise for static files on Render
     "whitenoise.middleware.WhiteNoiseMiddleware",
-
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -70,6 +67,13 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_HEADERS = [
     "content-type",
     "x-api-key",
+]
+
+CORS_ALLOW_ALL_HEADERS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    "GET",
+    "OPTIONS",
 ]
 
 ROOT_URLCONF = "speaktruth.urls"
