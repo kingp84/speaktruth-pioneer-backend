@@ -6,12 +6,18 @@ from datetime import date
 from assignments.models import Assignment
 from assignments.utils import is_second_wednesday, is_fifth_sunday
 import calendar
+import os
 
 
 # ---------------------------------------------------------
 # API: Assignments for a Single Day (Used by SongLeader App)
 # ---------------------------------------------------------
 def api_assignments_for_day(request, year, month, day):
+    # API key check
+    api_key = request.headers.get("X-API-Key")
+    if api_key != os.environ.get("SONGLEADER_API_KEY"):
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+
     dt = date(year, month, day)
 
     assignments = Assignment.objects.filter(
@@ -20,27 +26,25 @@ def api_assignments_for_day(request, year, month, day):
         date__day=day,
     ).select_related("person", "role")
 
-    data = [
-        {
-            "id": a.id,
-            "role": a.role.name,
-            "person": a.person.full_name if a.person else None,
-            "service_type": a.service_type,
-        }
-        for a in assignments
-    ]
-
-    notes = []
-    if is_fifth_sunday(dt):
-        notes.append("Fellowship Meal at noon. Afternoon service around 1 PM. No regular evening service.")
-    if is_second_wednesday(dt):
-        notes.append("Singing Night — congregational singing service.")
-
-    return JsonResponse({
+    # Structured response
+    data = {
         "date": dt.isoformat(),
-        "assignments": data,
-        "notes": notes,
-    })
+        "assignments": {},
+        "notes": []
+    }
+
+    # Convert roles into clean keys
+    for a in assignments:
+        role_key = a.role.name.lower().replace(" ", "_")
+        data["assignments"][role_key] = a.person.full_name if a.person else None
+
+    # Add service notes
+    if is_fifth_sunday(dt):
+        data["notes"].append("Fellowship Meal at noon. Afternoon service around 1 PM. No regular evening service.")
+    if is_second_wednesday(dt):
+        data["notes"].append("Singing Night — congregational singing service.")
+
+    return JsonResponse(data)
 
 
 # ---------------------------------------------------------
