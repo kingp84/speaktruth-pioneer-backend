@@ -17,7 +17,7 @@
     </div>
 </nav>
 
-<div class="container bg-white p-4 rounded shadow-sm assignments-container" style="max-width: 900px; margin-top: 30px;">
+<div class="container bg-white p-4 rounded shadow-sm assignments-container">
 
     <h1 class="text-primary text-center mb-4">{{ date|date:"F j, Y" }} Assignments</h1>
 
@@ -94,50 +94,49 @@
 
 <style>
 
-/* --- MOBILE FONT + SPACING SCALE-UP (keeps same design) --- */
+/* Remove inline margin and control it here */
+.assignments-container {
+    max-width: 900px;
+    margin-top: 30px;
+}
+
+/* --- MOBILE FONT + SPACING SCALE-UP (guaranteed to apply) --- */
 @media (max-width: 576px) {
 
-    /* Global bump */
     body {
-        font-size: 1.15rem;
-        line-height: 1.45;
+        font-size: 1.18rem !important;
+        line-height: 1.5 !important;
     }
 
-    /* Page title (date + "Assignments") */
     h1 {
-        font-size: 1.9rem;
-        margin-bottom: 1.4rem;
-        font-weight: 700;
+        font-size: 2rem !important;
+        margin-bottom: 1.5rem !important;
+        font-weight: 700 !important;
     }
 
-    /* Card headers (Sunday Morning, etc.) */
     .card-header {
-        font-size: 1.25rem;
-        padding: .75rem 1rem;
+        font-size: 1.3rem !important;
+        padding: .85rem 1rem !important;
     }
 
-    /* Assignment lines */
     .card-body p {
-        font-size: 1.15rem;
-        margin-bottom: .6rem;
+        font-size: 1.2rem !important;
+        margin-bottom: .7rem !important;
     }
 
-    /* Role names (bold text) */
     strong {
-        font-size: 1.18rem;
+        font-size: 1.22rem !important;
     }
 
-    /* Notes under roles */
     .fst-italic {
-        font-size: 1.05rem;
-        margin-left: 1rem;
+        font-size: 1.1rem !important;
+        margin-left: 1rem !important;
     }
 
-    /* Container spacing so it fills more of the screen */
     .assignments-container {
-        margin-top: 8px;
-        padding: 1.25rem !important;
-        min-height: 70vh;
+        margin-top: 10px !important;
+        padding: 1.4rem !important;
+        min-height: 72vh !important;
     }
 }
 
@@ -156,7 +155,6 @@
 }
 </style>
 
-<!-- Hidden today variable to satisfy any leftover logic -->
 <span style="display:none;">{{ today }}</span>
 
 </body>
