@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Member Login – Pioneer & Bell church of Christ</title>
 
     {% load static %}
@@ -12,11 +13,11 @@
 
 <body class="bg-light d-flex justify-content-center align-items-center" style="height: 100vh;">
 
-<div class="container" style="max-width: 420px;">
+<div class="container login-container" style="max-width: 420px;">
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
 
-            <h2 class="text-center text-primary mb-4">Member Login</h2>
+            <h2 class="text-center text-primary mb-4 login-title">Member Login</h2>
 
             {% if error %}
                 <div class="alert alert-danger text-center">{{ error }}</div>
@@ -26,26 +27,26 @@
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Username</label>
-                    <input type="text" name="username" class="form-control" required>
+                    <label class="form-label fw-bold login-label">Username</label>
+                    <input type="text" name="username" class="form-control login-input" required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Password</label>
+                    <label class="form-label fw-bold login-label">Password</label>
 
                     <div class="input-group">
-                        <input type="password" name="password" class="form-control" id="memberPassword" required>
-                        <span class="input-group-text" id="toggleMemberPassword" style="cursor: pointer;">
+                        <input type="password" name="password" class="form-control login-input" id="memberPassword" required>
+                        <span class="input-group-text login-eye" id="toggleMemberPassword" style="cursor: pointer;">
                             <i class="bi bi-eye-slash"></i>
                         </span>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100">Log In</button>
+                <button type="submit" class="btn btn-primary w-100 login-btn">Log In</button>
             </form>
 
             <div class="text-center mt-3">
-                <a href="https://pioneer-and-bell-speaktruth.github.io" class="text-decoration-none">
+                <a href="https://pioneer-and-bell-speaktruth.github.io" class="text-decoration-none login-return">
                     Return to Public Homepage
                 </a>
             </div>
@@ -53,6 +54,46 @@
         </div>
     </div>
 </div>
+
+<style>
+
+/* --- MOBILE OPTIMIZATION --- */
+@media (max-width: 576px) {
+
+    .login-container {
+        padding: 1rem !important;
+    }
+
+    .login-title {
+        font-size: 2rem !important;
+        font-weight: 700 !important;
+    }
+
+    .login-label {
+        font-size: 1.2rem !important;
+    }
+
+    .login-input {
+        font-size: 1.2rem !important;
+        padding: .8rem !important;
+    }
+
+    .login-eye {
+        font-size: 1.3rem !important;
+        padding: .6rem .8rem !important;
+    }
+
+    .login-btn {
+        font-size: 1.25rem !important;
+        padding: .9rem !important;
+    }
+
+    .login-return {
+        font-size: 1.15rem !important;
+    }
+}
+
+</style>
 
 <!-- Password Toggle Script -->
 <script>

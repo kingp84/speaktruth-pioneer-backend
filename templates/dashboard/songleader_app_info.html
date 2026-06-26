@@ -1,38 +1,50 @@
 {% extends "base.html" %}
-<script src="{% static 'app.js' %}"></script>
+{% load static %}
 
 {% block content %}
-<div class="container mt-4">
+
+<!-- Mobile viewport support -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="{% static 'app.js' %}"></script>
+
+<div class="container mt-4 songleader-container">
 
     <div class="card shadow-sm">
         <div class="card-body">
 
-            <h2 class="card-title text-primary mb-3">
+            <h2 class="card-title text-primary mb-3 songleader-title">
                 <i class="bi bi-music-note-beamed"></i> SongLeader App
             </h2>
 
-            <p class="lead">
+            <p class="lead songleader-lead">
                 The SongLeader App helps you prepare and organize your song lists quickly and easily.
                 It works on both Android and iPhone using “Add to Home Screen.”
             </p>
 
             <hr>
 
-            <h4 class="text-secondary">Install the App</h4>
+            <h4 class="text-secondary songleader-section-title">Install the App</h4>
 
             <div class="mt-3">
-                <h5 class="fw-bold">Android</h5>
-                <p>Open the app and choose <strong>Add to Home Screen</strong>:</p>
-                <a href="https://pioneer-and-bell-speaktruth.github.io/SongLeaderApp/index.html" class="btn btn-outline-primary btn-sm">
+                <h5 class="fw-bold songleader-subtitle">Android</h5>
+                <p class="songleader-text">
+                    Open the app and choose <strong>Add to Home Screen</strong>:
+                </p>
+                <a href="https://pioneer-and-bell-speaktruth.github.io/SongLeaderApp/index.html"
+                   class="btn btn-outline-primary btn-sm songleader-button">
                     Open SongLeader App
                 </a>
             </div>
 
             <div class="mt-4">
-                <h5 class="fw-bold">iPhone / iPad</h5>
-                <p>Open the app in Safari, tap the <strong>Share</strong> icon, then choose
-                   <strong>Add to Home Screen</strong>:</p>
-                <a href="https://pioneer-and-bell-speaktruth.github.io/SongLeaderApp/index.html" class="btn btn-outline-primary btn-sm">
+                <h5 class="fw-bold songleader-subtitle">iPhone / iPad</h5>
+                <p class="songleader-text">
+                    Open the app in Safari, tap the <strong>Share</strong> icon, then choose
+                    <strong>Add to Home Screen</strong>:
+                </p>
+                <a href="https://pioneer-and-bell-speaktruth.github.io/SongLeaderApp/index.html"
+                   class="btn btn-outline-primary btn-sm songleader-button">
                     Open SongLeader App
                 </a>
             </div>
@@ -41,4 +53,52 @@
     </div>
 
 </div>
+
+<style>
+
+/* Desktop stays normal */
+.songleader-container {
+    max-width: 900px;
+}
+
+/* --- MOBILE OPTIMIZATION --- */
+@media (max-width: 576px) {
+
+    .songleader-container {
+        padding: 1.25rem !important;
+        min-height: 70vh;
+    }
+
+    .songleader-title {
+        font-size: 1.9rem !important;
+        font-weight: 700 !important;
+    }
+
+    .songleader-lead {
+        font-size: 1.25rem !important;
+        line-height: 1.5 !important;
+    }
+
+    .songleader-section-title {
+        font-size: 1.4rem !important;
+        margin-top: 1.2rem !important;
+    }
+
+    .songleader-subtitle {
+        font-size: 1.25rem !important;
+    }
+
+    .songleader-text {
+        font-size: 1.15rem !important;
+        line-height: 1.45 !important;
+    }
+
+    .songleader-button {
+        font-size: 1.1rem !important;
+        padding: .6rem 1rem !important;
+    }
+}
+
+</style>
+
 {% endblock %}

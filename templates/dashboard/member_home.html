@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Member Dashboard – Pioneer & Bell church of Christ</title>
 
     {% load static %}
@@ -17,15 +18,15 @@
     </div>
 </nav>
 
-<div class="container">
+<div class="container member-home-container">
 
     <div class="row">
 
         <!-- LEFT SIDE: Welcome text -->
         <div class="col-md-8">
-            <div class="bg-white p-4 rounded shadow-sm mb-4">
-                <h1 class="text-primary mb-3">Member Dashboard</h1>
-                <p class="fs-5">
+            <div class="bg-white p-4 rounded shadow-sm mb-4 member-welcome">
+                <h1 class="text-primary mb-3 member-title">Member Dashboard</h1>
+                <p class="fs-5 member-text">
                     Welcome to the members area. Use the buttons on the right to access assignments,
                     the calendar, directory, and other resources.
                 </p>
@@ -34,36 +35,34 @@
 
         <!-- RIGHT SIDE: BUTTON PANEL -->
         <div class="col-md-4">
-            <div class="d-grid gap-3">
+            <div class="d-grid gap-3 member-buttons">
 
-                <a class="btn btn-primary btn-lg"
+                <a class="btn btn-primary btn-lg member-btn"
                    href="{% url 'monthly_assignments' year=today.year month=today.month %}">
                     This Month's Assignments
                 </a>
 
-                <a class="btn btn-primary btn-lg"
+                <a class="btn btn-primary btn-lg member-btn"
                    href="{% url 'assignment_calendar' %}">
                     Assignments Calendar
                 </a>
 
-                <a class="btn btn-primary btn-lg"
+                <a class="btn btn-primary btn-lg member-btn"
                    href="{% url 'songleader_app_info' %}">
                     SongLeader App
                 </a>
 
-
-
-                <a class="btn btn-primary btn-lg"
+                <a class="btn btn-primary btn-lg member-btn"
                    href="{% url 'directory' %}">
                     Directory
                 </a>
 
-                <a class="btn btn-secondary btn-lg"
+                <a class="btn btn-secondary btn-lg member-btn"
                    href="https://teams.live.com/l/community/FAACC3RUT_BmLT49A" target="_blank">
                     Microsoft Teams
                 </a>
 
-                <a class="btn btn-danger btn-lg"
+                <a class="btn btn-danger btn-lg member-btn"
                    href="{% url 'logout' %}">
                     Logout
                 </a>
@@ -75,7 +74,7 @@
 
     <!-- PUBLIC WEBSITE BUTTON CENTERED AT BOTTOM -->
     <div class="text-center mt-5">
-        <a class="btn btn-light btn-lg"
+        <a class="btn btn-light btn-lg member-public-btn"
            href="https://pioneer-and-bell-speaktruth.github.io"
            target="_blank">
             Public Website
@@ -83,6 +82,51 @@
     </div>
 
 </div>
+
+<style>
+
+/* Desktop stays normal */
+.member-home-container {
+    max-width: 1100px;
+}
+
+/* --- MOBILE OPTIMIZATION --- */
+@media (max-width: 576px) {
+
+    .member-home-container {
+        padding: 1rem !important;
+    }
+
+    .member-title {
+        font-size: 2rem !important;
+        font-weight: 700 !important;
+    }
+
+    .member-text {
+        font-size: 1.2rem !important;
+        line-height: 1.5 !important;
+    }
+
+    .member-welcome {
+        padding: 1.5rem !important;
+    }
+
+    .member-buttons {
+        margin-top: 1rem;
+    }
+
+    .member-btn {
+        font-size: 1.25rem !important;
+        padding: 1rem !important;
+    }
+
+    .member-public-btn {
+        font-size: 1.25rem !important;
+        padding: .9rem 1.4rem !important;
+    }
+}
+
+</style>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
