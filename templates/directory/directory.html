@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Directory – Pioneer & Bell church of Christ</title>
 
     {% load static %}
@@ -18,23 +19,23 @@
 </nav>
 
 <!-- MAIN CONTENT -->
-<div class="container bg-white p-4 rounded shadow-sm">
+<div class="container bg-white p-4 rounded shadow-sm directory-container">
 
-    <h1 class="text-primary mb-4">Member Directory</h1>
+    <h1 class="text-primary mb-4 directory-title">Member Directory</h1>
 
     <!-- SEARCH BAR -->
     <div class="mb-4">
         <input
             type="text"
             id="directorySearch"
-            class="form-control form-control-lg"
+            class="form-control form-control-lg directory-search"
             placeholder="Search by name, phone, email, or role">
     </div>
 
     <!-- DIRECTORY TABLE -->
-    <div class="table-responsive">
+    <div class="table-responsive directory-table-wrapper">
         <table class="table table-striped table-hover" id="directoryTable">
-            <thead class="table-primary">
+            <thead class="table-primary directory-header">
                 <tr>
                     <th>Name</th>
                     <th>Phone</th>
@@ -46,13 +47,13 @@
             </thead>
             <tbody>
                 {% for entry in members %}
-                <tr>
-                    <td>{{ entry.first_name }} {{ entry.last_name }}</td>
-                    <td>{{ entry.phone }}</td>
-                    <td>{{ entry.email }}</td>
-                    <td>{{ entry.address }}</td>
-                    <td>{{ entry.status }}</td>
-                    <td>
+                <tr class="directory-row">
+                    <td class="directory-cell">{{ entry.first_name }} {{ entry.last_name }}</td>
+                    <td class="directory-cell">{{ entry.phone }}</td>
+                    <td class="directory-cell">{{ entry.email }}</td>
+                    <td class="directory-cell">{{ entry.address }}</td>
+                    <td class="directory-cell">{{ entry.status }}</td>
+                    <td class="directory-cell">
                         {% for r in entry.roles.all %}
                             {{ r.name }}{% if not forloop.last %}, {% endif %}
                         {% empty %}
@@ -82,6 +83,55 @@ document.getElementById("directorySearch").addEventListener("keyup", function ()
     });
 });
 </script>
+
+<style>
+
+/* Desktop stays normal */
+.directory-container {
+    max-width: 1100px;
+}
+
+/* --- MOBILE OPTIMIZATION --- */
+@media (max-width: 576px) {
+
+    .directory-container {
+        padding: 1.25rem !important;
+    }
+
+    .directory-title {
+        font-size: 1.9rem !important;
+        font-weight: 700 !important;
+    }
+
+    .directory-search {
+        font-size: 1.2rem !important;
+        padding: .8rem !important;
+    }
+
+    .directory-header th {
+        font-size: 1.1rem !important;
+        padding: .75rem .4rem !important;
+        white-space: nowrap;
+    }
+
+    .directory-row {
+        font-size: 1.05rem !important;
+    }
+
+    .directory-cell {
+        padding: .65rem .4rem !important;
+        vertical-align: middle !important;
+        word-break: break-word;
+    }
+
+    /* Make table easier to scroll horizontally */
+    .directory-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+</style>
 
 </body>
 </html>

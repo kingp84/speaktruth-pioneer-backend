@@ -139,7 +139,6 @@ def monthly_assignments(request, year, month):
 
     return render(request, "assignments/monthly_assignments.html", context)
 
-
 # ---------------------------------------------------------
 # MONTHLY ASSIGNMENTS PDF
 # ---------------------------------------------------------
