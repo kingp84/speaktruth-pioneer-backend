@@ -121,10 +121,14 @@ document.getElementById("directorySearch").addEventListener("keyup", function ()
     .directory-cell {
         padding: .65rem .4rem !important;
         vertical-align: middle !important;
-        word-break: break-word;
+
+        /* FIX WRAPPING */
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
     }
 
-    /* Make table easier to scroll horizontally */
+    /* Smooth horizontal scrolling */
     .directory-table-wrapper {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
