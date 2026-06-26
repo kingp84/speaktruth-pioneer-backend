@@ -10,14 +10,14 @@
 
 <body class="bg-light">
 
-<!-- SIMPLE CENTERED HEADER -->
+<!-- SIMPLE CENTERED HEADER (unchanged) -->
 <nav class="navbar navbar-dark bg-primary mb-4">
     <div class="container-fluid justify-content-center">
         <span class="navbar-brand mb-0 h1 fw-bold">Pioneer & Bell</span>
     </div>
 </nav>
 
-<div class="container bg-white p-4 rounded shadow-sm" style="max-width: 900px; margin-top: 30px;">
+<div class="container bg-white p-4 rounded shadow-sm assignments-container" style="max-width: 900px; margin-top: 30px;">
 
     <h1 class="text-primary text-center mb-4">{{ date|date:"F j, Y" }} Assignments</h1>
 
@@ -93,6 +93,55 @@
 </div>
 
 <style>
+
+/* --- MOBILE FONT + SPACING SCALE-UP (keeps same design) --- */
+@media (max-width: 576px) {
+
+    /* Global bump */
+    body {
+        font-size: 1.15rem;
+        line-height: 1.45;
+    }
+
+    /* Page title (date + "Assignments") */
+    h1 {
+        font-size: 1.9rem;
+        margin-bottom: 1.4rem;
+        font-weight: 700;
+    }
+
+    /* Card headers (Sunday Morning, etc.) */
+    .card-header {
+        font-size: 1.25rem;
+        padding: .75rem 1rem;
+    }
+
+    /* Assignment lines */
+    .card-body p {
+        font-size: 1.15rem;
+        margin-bottom: .6rem;
+    }
+
+    /* Role names (bold text) */
+    strong {
+        font-size: 1.18rem;
+    }
+
+    /* Notes under roles */
+    .fst-italic {
+        font-size: 1.05rem;
+        margin-left: 1rem;
+    }
+
+    /* Container spacing so it fills more of the screen */
+    .assignments-container {
+        margin-top: 8px;
+        padding: 1.25rem !important;
+        min-height: 70vh;
+    }
+}
+
+/* Print rules (unchanged) */
 @media print {
     body {
         background: white !important;
