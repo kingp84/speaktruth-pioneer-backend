@@ -35,44 +35,56 @@
     </div>
     {% endif %}
 
-    {% if sun_am %}
+    <!-- ============================= -->
+    <!-- SUNDAY TWO-COLUMN LAYOUT     -->
+    <!-- ============================= -->
+    {% if sun_am or sun_pm %}
     <div class="card mb-3">
         <div class="card-header bg-primary text-white fw-bold">
-            Sunday Morning
+            Sunday Assignments
         </div>
+
         <div class="card-body">
-            {% for a in sun_am %}
-                <p class="mb-1">
-                    <strong>{{ a.role.name }}:</strong>
-                    {{ a.person.first_name }} {{ a.person.last_name }}
-                </p>
-                {% if a.notes %}
-                    <p class="fst-italic text-muted ms-3 mb-2">{{ a.notes }}</p>
+            <div class="row g-4 sunday-columns">
+
+                <!-- SUNDAY MORNING -->
+                {% if sun_am %}
+                <div class="col-6">
+                    <h5 class="fw-bold text-primary">Sunday Morning</h5>
+                    {% for a in sun_am %}
+                        <p class="mb-1">
+                            <strong>{{ a.role.name }}:</strong>
+                            {{ a.person.first_name }} {{ a.person.last_name }}
+                        </p>
+                        {% if a.notes %}
+                            <p class="fst-italic text-muted ms-3 mb-2">{{ a.notes }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
                 {% endif %}
-            {% endfor %}
+
+                <!-- SUNDAY EVENING -->
+                {% if sun_pm %}
+                <div class="col-6">
+                    <h5 class="fw-bold text-primary">Sunday Evening</h5>
+                    {% for a in sun_pm %}
+                        <p class="mb-1">
+                            <strong>{{ a.role.name }}:</strong>
+                            {{ a.person.first_name }} {{ a.person.last_name }}
+                        </p>
+                        {% if a.notes %}
+                            <p class="fst-italic text-muted ms-3 mb-2">{{ a.notes }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+            </div>
         </div>
     </div>
     {% endif %}
 
-    {% if sun_pm %}
-    <div class="card mb-3">
-        <div class="card-header bg-primary text-white fw-bold">
-            Sunday Evening
-        </div>
-        <div class="card-body">
-            {% for a in sun_pm %}
-                <p class="mb-1">
-                    <strong>{{ a.role.name }}:</strong>
-                    {{ a.person.first_name }} {{ a.person.last_name }}
-                </p>
-                {% if a.notes %}
-                    <p class="fst-italic text-muted ms-3 mb-2">{{ a.notes }}</p>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-
+    <!-- WEDNESDAY EVENING (unchanged) -->
     {% if wed_pm %}
     <div class="card mb-3">
         <div class="card-header bg-primary text-white fw-bold">
@@ -101,7 +113,14 @@
     margin-top: 30px;
 }
 
-/* --- MOBILE FONT + SPACING SCALE-UP (guaranteed to apply) --- */
+/* Sunday two-column layout: Option A (slightly smaller text on mobile) */
+@media (max-width: 576px) {
+    .sunday-columns {
+        font-size: 0.92rem !important;
+    }
+}
+
+/* --- MOBILE FONT + SPACING SCALE-UP (existing rules) --- */
 @media (max-width: 576px) {
 
     body {
