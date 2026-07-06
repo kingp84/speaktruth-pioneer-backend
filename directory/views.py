@@ -17,7 +17,7 @@ except ImportError:
 def directory_view(request):
     today = date.today()
 
-    members = DirectoryEntry.objects.all().order_by("last_name", "first_name")
+    members = DirectoryEntry.objects.all().order_by("first_name", "last_name")
 
     context = {
         "members": members,      # <-- correct queryset name
@@ -37,7 +37,7 @@ def directory_pdf(request):
             status=501
         )
 
-    members = DirectoryEntry.objects.all().order_by("last_name", "first_name")
+    members = DirectoryEntry.objects.all().order_by("first_name", "last_name")
 
     html_string = render_to_string("directory/directory_pdf.html", {
         "members": members
