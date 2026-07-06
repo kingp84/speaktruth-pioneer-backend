@@ -43,8 +43,6 @@
                     <th>Phone</th>
                     <th>Email</th>
                     <th>Address</th>
-                    <th>Status</th>
-                    <th>Roles</th>
                 </tr>
             </thead>
             <tbody>
@@ -56,14 +54,6 @@
                     <td class="directory-cell">{{ entry.phone }}</td>
                     <td class="directory-cell">{{ entry.email }}</td>
                     <td class="directory-cell">{{ entry.address }}</td>
-                    <td class="directory-cell">{{ entry.status }}</td>
-                    <td class="directory-cell">
-                        {% for r in entry.roles.all %}
-                            {{ r.name }}{% if not forloop.last %}, {% endif %}
-                        {% empty %}
-                            None
-                        {% endfor %}
-                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
