@@ -38,8 +38,8 @@ class Role(models.Model):
 
 class DirectoryEntry(models.Model):
     # Basic identity
-    first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=50)
     family_name = models.CharField(max_length=50)
 
     # Contact info
