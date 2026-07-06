@@ -99,12 +99,24 @@ WSGI_APPLICATION = "speaktruth.wsgi.application"
 # Database (Render will use SQLite unless you add PostgreSQL)
 import dj_database_url
 
-DATABASES = {
-    "default": dj_database_url.config(
-        conn_max_age=600,
-        ssl_require=True
-    )
-}
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    # Use Render Postgres
+    DATABASES = {
+        "default": dj_database_url.config(
+            conn_max_age=600,
+            ssl_require=True
+        )
+    }
+else:
+    # Use local SQLite
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

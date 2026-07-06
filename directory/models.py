@@ -40,6 +40,7 @@ class DirectoryEntry(models.Model):
     # Basic identity
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
+    family_name = models.CharField(max_length=50)
 
     # Contact info
     phone = models.CharField(max_length=20, blank=True)
