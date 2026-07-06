@@ -99,22 +99,23 @@ WSGI_APPLICATION = "speaktruth.wsgi.application"
 # Database (Render will use SQLite unless you add PostgreSQL)
 import dj_database_url
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
-    # Use Render Postgres
     DATABASES = {
         "default": dj_database_url.config(
+            default=DATABASE_URL,
             conn_max_age=600,
             ssl_require=True
         )
     }
 else:
-    # Use local SQLite
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
 
