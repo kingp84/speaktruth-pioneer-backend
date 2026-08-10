@@ -13,8 +13,9 @@ class Assignment(models.Model):
     date = models.DateField()
     service_type = models.CharField(max_length=30, choices=SERVICE_TYPES)
     notes = models.TextField(blank=True, null=True)
+    family = models.CharField(max_length=100, blank=True, null=True)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
-    person = models.ForeignKey(DirectoryEntry, on_delete=models.CASCADE)
+    person = models.ForeignKey(DirectoryEntry, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         ordering = ["date", "service_type", "role"]

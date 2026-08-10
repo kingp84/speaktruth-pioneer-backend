@@ -36,15 +36,16 @@
         <div class="card-body">
             {% for m in monthly_roles %}
                 <p class="mb-1">
-                    <strong>{{ m.role.name }}:</strong>
+                <strong>{{ m.role.name }}:</strong>
+
+                {% if m.family %}
+                    {{ m.family }}
+                {% elif m.person %}
                     {{ m.person.first_name }} {{ m.person.last_name }}
-                </p>
-                {% if m.notes %}
-                    <p class="fst-italic text-muted ms-3 mb-2">{{ m.notes }}</p>
+                {% else %}
+                    {{ m.notes }}
                 {% endif %}
-            {% empty %}
-                <p class="text-muted mb-0">No monthly assignments found.</p>
-            {% endfor %}
+                </p>
         </div>
     </div>
 
