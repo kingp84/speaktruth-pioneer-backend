@@ -2,8 +2,9 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
+BASE_DIR = Path(__file__).resolve().parent.parent
 # Load environment variables (Render uses these)
-load_dotenv()
+load_dotenv(dotenv_path=BASE_DIR / ".env")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -28,6 +29,8 @@ ALLOWED_HOSTS = [
     "pioneer-and-bell-speaktruth.github.io"
 ]
 
+CSRF_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 

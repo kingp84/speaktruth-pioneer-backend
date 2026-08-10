@@ -106,7 +106,12 @@
                                             {% for a in services|get_item:"SUNDAY EVENING" %}
                                                 <p class="mb-1">
                                                     <strong>{{ a.role.name }}:</strong>
-                                                    {{ a.person.first_name }} {{ a.person.last_name }}
+
+                                                    {% if a.role.name == "Building Cleanup" %}
+                                                        {{ a.person.family_name }}
+                                                    {% else %}
+                                                        {{ a.person.first_name }} {{ a.person.last_name }}
+                                                    {% endif %}
                                                 </p>
                                                 {% if a.notes %}
                                                     <p class="fst-italic text-muted ms-3 mb-2">{{ a.notes }}</p>

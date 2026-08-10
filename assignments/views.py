@@ -111,7 +111,6 @@ def monthly_assignments(request, year, month):
                 )
                 if note not in sundays[dt]["notes"]:
                     sundays[dt]["notes"].append(note)
-                sundays[dt]["SUNDAY EVENING"] = []
 
         # Wednesday assignments
         if a.service_type == "WEDNESDAY EVENING":
