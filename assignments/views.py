@@ -86,7 +86,28 @@ def monthly_assignments(request, year, month):
         date__month=month
     ).select_related("person", "role")
 
-    monthly_roles = assignments.filter(service_type="MONTHLY")
+    # Get all monthly assignments
+    monthly_roles_qs = assignments.filter(service_type="MONTHLY")
+
+    # Build a dictionary: { role_name: display_name }
+    monthly_roles = {}
+
+    for a in monthly_roles_qs:
+        role_name = a.role.name
+
+        # Handle individuals
+        if a.person:
+            display_name = f"{a.person.first_name} {a.person.last_name}"
+
+        # Handle families (Building Cleanup)
+        elif hasattr(a, "family") and a.family:
+            display_name = a.family.name
+
+        # Nothing assigned
+        else:
+            display_name = None
+
+        monthly_roles[role_name] = display_name
 
     sundays = {}
     wednesdays = {}
@@ -135,7 +156,6 @@ def monthly_assignments(request, year, month):
         "current_year": today.year,
         "current_month": today.month,
     }
-
     return render(request, "assignments/monthly_assignments.html", context)
 
 # ---------------------------------------------------------

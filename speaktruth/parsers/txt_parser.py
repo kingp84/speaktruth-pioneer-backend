@@ -71,27 +71,50 @@ def parse_assignment_txt(path):
         monthly_section = False
         for line in lines:
 
-            if "MONTHLY ASSIGNMENTS" in line.upper():
+            # Detect start of monthly section
+            if "MONTHLY" in line.upper() and "ASSIGN" in line.upper():
                 monthly_section = True
                 continue
 
+            # Exit monthly section when weekly section begins
+            if "WEEKLY" in line.upper():
+                monthly_section = False
+                continue
+
             if monthly_section:
-                if ":" not in line:
-                    monthly_section = False
+
+                # Skip notes
+                if line.strip().startswith("Note"):
                     continue
 
-                role_name, person_name = line.split(":", 1)
-                role = find_role(role_name)
-                person = find_person(person_name)
+                # Split on tabs (handles multiple assignments per line)
+                parts = re.split(r"\t+", line.strip())
+                parts = [p for p in parts if p.strip()]  # remove empty parts
 
-                if role and person:
-                    Assignment.objects.update_or_create(
-                        date=datetime.strptime(f"{month_name} 1 {year}", "%B %d %Y").date(),
-                        service_type="MONTHLY",
-                        role=role,
-                        defaults={"person": person},
-                    )
-                    print("MONTHLY:", role_name, "→", person_name)
+                for part in parts:
+                    if ":" not in part:
+                        continue
+
+                    role_name, person_name = part.split(":", 1)
+                    role_name = role_name.strip()
+                    person_name = person_name.strip()
+
+                    role = find_role(role_name)
+                    person = find_person(person_name)
+
+                    # Handle families
+                    family = None
+                    if not person:
+                        family = DirectoryEntry.objects.filter(family_name__iexact=person_name).first()
+
+                    if role and (person or family):
+                        Assignment.objects.update_or_create(
+                            date=datetime.strptime(f"{month_name} 1 {year}", "%B %d %Y").date(),
+                            service_type="MONTHLY",
+                            role=role,
+                            defaults={"person": person, "family": family},
+                        )
+                        print("MONTHLY:", role_name, "→", person_name)
 
     # -----------------------------
     # SUNDAY WEEKLY ASSIGNMENTS
