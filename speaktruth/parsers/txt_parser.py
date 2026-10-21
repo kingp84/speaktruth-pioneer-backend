@@ -106,14 +106,20 @@ def parse_assignment_txt(path):
                     role = find_role(role_name)
                     person = find_person(person_name)
 
-                    # Handle families
-                    # Try family first
-                    family = DirectoryEntry.objects.filter(family_name__iexact=person_name).first()
+                    # SPECIAL CASE: Building Cleanup is ALWAYS a family role
+                    if role_name.lower() == "building cleanup":
+                        family_entry = DirectoryEntry.objects.filter(family_name__iexact=person_name).first()
+                        family = family_entry.family_name if family_entry else None
+                        person = None
+                    else:
+                        # Try family first
+                        family_entry = DirectoryEntry.objects.filter(family_name__iexact=person_name).first()
+                        family = family_entry.family_name if family_entry else None
 
-                    # If no family, fall back to person
-                    person = None
-                    if not family:
-                        person = find_person(person_name)
+                        # If no family, fall back to person
+                        person = None
+                        if not family:
+                            person = find_person(person_name)
 
                     if role and (person or family):
                         Assignment.objects.update_or_create(
