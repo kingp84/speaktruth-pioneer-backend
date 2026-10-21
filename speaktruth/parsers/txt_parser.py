@@ -84,11 +84,15 @@ def parse_assignment_txt(path):
             if monthly_section:
 
                 # Skip notes
-                if line.strip().startswith("Note"):
-                    continue
+                # If the line contains a Note, remove only the Note part
+                if "Note:" in line:
+                    # Split on tabs, remove the Note column
+                    parts = re.split(r"\t+", line)
+                    parts = [p for p in parts if not p.strip().startswith("Note")]
+                else:
+                    # Normal tab split
+                    parts = re.split(r"\t+", line)
 
-                # Split on tabs (handles multiple assignments per line)
-                parts = re.split(r"\t+", line.strip())
                 parts = [p for p in parts if p.strip()]  # remove empty parts
 
                 for part in parts:
