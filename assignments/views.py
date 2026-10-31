@@ -87,26 +87,7 @@ def monthly_assignments(request, year, month):
     ).select_related("person", "role")
 
     # Get all monthly assignments
-    monthly_roles_qs = assignments.filter(service_type="MONTHLY")
-
-    # Build a dictionary: { role_name: display_name }
-    monthly_roles = {}
-
-    for a in monthly_roles_qs:
-        role_name = a.role.name
-
-        # Handle individuals
-        if a.person:
-            display_name = f"{a.person.first_name} {a.person.last_name}"
-
-        # Handle families (Building Cleanup)
-        elif hasattr(a, "family") and a.family:
-            display_name = str(a.family)
-
-        else:
-            display_name = None
-
-        monthly_roles[role_name] = display_name
+    monthly_roles = assignments.filter(service_type="MONTHLY")
 
     sundays = {}
     wednesdays = {}
