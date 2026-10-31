@@ -101,9 +101,8 @@ def monthly_assignments(request, year, month):
 
         # Handle families (Building Cleanup)
         elif hasattr(a, "family") and a.family:
-            display_name = a.family.name
+            display_name = str(a.family)
 
-        # Nothing assigned
         else:
             display_name = None
 
